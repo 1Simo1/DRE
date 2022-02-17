@@ -1,0 +1,21 @@
+{
+  "solution": {
+    "path": "DRE.sln",
+    "projects": [
+		"DRE.Shared\\DRE.Shared.shproj",
+
+		"DRE.Droid\\DRE.Droid.csproj",
+
+		"DRE.iOS\\DRE.iOS.csproj",
+
+
+		"DRE.Wasm\\DRE.Wasm.csproj",
+
+		"DRE.macOS\\DRE.macOS.csproj",
+
+		"DRE.Skia.Gtk\\DRE.Skia.Gtk.csproj",
+
+		"DRE.Skia.Linux.FrameBuffer\\DRE.Skia.Linux.FrameBuffer.csproj",
+    ]
+  }
+}

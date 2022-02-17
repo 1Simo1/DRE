@@ -1,0 +1,108 @@
+<Page x:Class="DRE.HomePage"
+	  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	  xmlns:aut="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	  xmlns:local="using:DRE"
+	  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	  xmlns:utu="using:Uno.Toolkit.UI"
+	  xmlns:uen="using:Uno.Extensions.Navigation.UI"
+	  xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+	  mc:Ignorable="d"
+	  Background="{ThemeResource MaterialBackgroundBrush}">
+
+
+
+    <muxc:Grid Margin="21">
+        <muxc:Grid.RowDefinitions>
+            <muxc:RowDefinition Height="Auto" />
+            <muxc:RowDefinition />
+            <muxc:RowDefinition Height="Auto" />
+        </muxc:Grid.RowDefinitions>
+        <muxc:Grid Background="LightGray" Grid.Row="0">
+            <muxc:Grid.ColumnDefinitions>
+                <muxc:ColumnDefinition Width="Auto" />
+                <muxc:ColumnDefinition Width="Auto" />
+                <muxc:ColumnDefinition />
+            </muxc:Grid.ColumnDefinitions>
+            <muxc:Image Grid.Column="0" Margin="21" Source="ms-appx:///Assets/Icons/DRE.ico"/>
+            <muxc:TextBlock Grid.Column="1" 
+                            VerticalAlignment="Center" 
+                            HorizontalAlignment="Center"
+                            FontSize="63"
+                            FontWeight="Thin"
+                            >
+                DR EDITOR
+            </muxc:TextBlock>
+
+        </muxc:Grid>
+        <muxc:Grid Grid.Row="1" Background="Transparent">
+            <muxc:Grid>
+                <muxc:Grid.ColumnDefinitions>
+                    <muxc:ColumnDefinition  Width="Auto" d:Width="321"/>
+                    <muxc:ColumnDefinition Width="*"/>
+                </muxc:Grid.ColumnDefinitions>
+                <muxc:Grid Background="AliceBlue" Grid.Column="0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <Grid Grid.Row="0">
+
+                        <StackPanel Orientation="Vertical" HorizontalAlignment="{Binding PaneOptionAlignment,UpdateSourceTrigger=PropertyChanged}" >
+
+                            <Button Margin="3" Command="{Binding PaneOptionCmd}">
+                                <SymbolIcon d:Symbol="ClosePane" Symbol="{Binding PaneOptionSymbol}" />
+                            </Button>
+                            <Button x:Name="Toggle_Theme" 
+                            Margin="3" 
+                            
+                           
+                            ToolTipService.ToolTip="Toggle Theme"
+                            Command="{Binding ToggleThemeCmd}"
+                            >
+
+
+                                <FontIcon Glyph="&#xEA61;" />
+
+                            </Button>
+                        </StackPanel>
+                    </Grid>
+
+                    <ListView Grid.Row="1" ItemsSource="{Binding NavList,UpdateSourceTrigger=PropertyChanged}" Name="NavMenuList">
+
+
+                        <ListView.ItemContainerStyle>
+                            <Style TargetType="ListViewItem">
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                            </Style>
+                        </ListView.ItemContainerStyle>
+                        <ListView.ItemTemplate>
+
+                            <DataTemplate>
+
+                                <Button HorizontalAlignment="Stretch"
+                                            HorizontalContentAlignment="Left"
+                                            Background="Transparent"
+                                            Command="{Binding Path=DataContext.NavCmd}"
+                                      
+                                            CommandParameter="{Binding}"
+                                    >
+                                    <StackPanel Orientation="Horizontal">
+                                        <Grid Background="Transparent" Width="{Binding MenuId,Converter={StaticResource NavItemMarginConverter}}"/>
+                                        <FontIcon Glyph="{Binding Icon,Mode=TwoWay}" />
+                                        <TextBlock Text="{Binding Name,Mode=TwoWay}" Margin="21,0,0,0"/>
+                                    </StackPanel>
+                                </Button>
+
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </muxc:Grid>
+
+
+            </muxc:Grid>
+        </muxc:Grid>
+        <muxc:StackPanel Grid.Row="2" Background="Teal" />
+    </muxc:Grid>
+</Page>
