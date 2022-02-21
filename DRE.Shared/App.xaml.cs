@@ -13,6 +13,8 @@ using Uno.Extensions.Navigation.Regions;
 using Uno.Extensions.Navigation.Toolkit;
 using Uno.Extensions.Serialization;
 using DRE.Views;
+using DRE.Interfaces;
+using DRE.Services;
 
 #if WINUI
 using Windows.ApplicationModel;
@@ -83,9 +85,9 @@ namespace DRE
                     // Register services for the application
                     .ConfigureServices(services =>
                     {
-                        /*services
+                        services
 
-                            .AddSingleton<IService, Service>();*/
+                            .AddSingleton<ISetupSvc, SetupSvc>();
                           
                     })
 
@@ -172,9 +174,8 @@ namespace DRE
             builder
                 .Register(RouteMap.For(nameof(ShellView)))
                 .Register(ViewMap.For(nameof(ShellView)).Show<ShellView>().With<ShellViewModel>())
-
-
-                .Register(ViewMap.For("Home").Show<HomePage>().With<HomeViewModel>());
+                .Register(ViewMap.For("Home").Show<HomePage>().With<HomeViewModel>())
+                .Register(ViewMap.For("Setup").Show<SetupDRE>().With<SetupDREViewModel>());
 
 
         }

@@ -1,6 +1,6 @@
 namespace DRE.ViewModels
 {
-	public class HomeViewModel
+	public class HomeViewModel : VM
     {
     }
 }

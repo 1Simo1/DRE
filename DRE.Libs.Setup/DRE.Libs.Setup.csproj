@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0-windows10.0.18362.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Dapper" Version="2.0.123" />
+    <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="6.0.2" />
+    <PackageReference Include="System.Data.SQLite" Version="1.0.115.5" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DRE.Libs.Bpa\DRE.Libs.Bpa.csproj" />
+    <ProjectReference Include="..\DRE.Libs.Lng\DRE.Libs.Lng.csproj" />
+    <ProjectReference Include="..\Dre.Libs.Trk\Dre.Libs.Trk.csproj" />
+  </ItemGroup>
+
+</Project>

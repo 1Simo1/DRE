@@ -6,23 +6,23 @@ using Uno.Extensions.Navigation;
 using Uno.Extensions.Hosting;
 using Uno.Extensions.Configuration;
 using System;
+using DRE.Interfaces;
 
 namespace DRE.ViewModels
 {
-	public class ShellViewModel
+	public class ShellViewModel : VM
 	{
 		private INavigator Navigator { get; }
-
-	
-
 			
-		public ShellViewModel(INavigator navigator)
+		public ShellViewModel(INavigator navigator, ISetupSvc setupSvc)
 		
 		{
 			Navigator = navigator;
 
-
-			Navigator.NavigateViewModelAsync<HomeViewModel>(this);
+			if (setupSvc.Setup)
+			{
+				Navigator.NavigateViewModelAsync<HomeViewModel>(this);
+			} else Navigator.NavigateViewModelAsync<SetupDREViewModel>(this);
 
 		}
 
