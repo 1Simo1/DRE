@@ -77,16 +77,16 @@ namespace DRE.Libs.Lng
 
             list.Add(new Localization()
             {
-                Code = "it",
+                Code = "IT",
                 ImgSrc = $"{dir}/IT.PNG"
             });
 
             foreach (String lng in LngFiles)
             {
-                String code = lng.Substring(dir.Length);
+                String code = lng.Substring(dir.Length+1);
                 code = code.Substring(0, code.Length - 4);
 
-                if (!String.IsNullOrEmpty(code) && !code.Equals("it") && File.Exists($"{dir}/{code.ToUpper()}.PNG"))
+                if (!String.IsNullOrEmpty(code) && !code.Equals("IT") && !code.Equals("default") && File.Exists($"{dir}/{code.ToUpper()}.PNG"))
                 {
                     list.Add(new Localization()
                     {
@@ -96,6 +96,7 @@ namespace DRE.Libs.Lng
                 } 
 
             }
+
                 return list;
         }
 

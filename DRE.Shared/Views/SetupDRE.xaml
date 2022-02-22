@@ -44,6 +44,7 @@
                              VerticalAlignment="Center" 
                              Background="AliceBlue"
                              Grid.Row="0"
+                             Name="LanguageSetup"
                              >
 
                 <muxc:ListBox VerticalAlignment="Center" Background="Transparent" ItemsSource="{Binding LngList,Mode=TwoWay}">
@@ -54,8 +55,8 @@
                     </muxc:ListBox.ItemsPanel>
                     <muxc:ListBox.ItemTemplate>
                         <DataTemplate>
-                            <muxc:Button Command="{Binding SetLngCmd}" CommandParameter="{Binding Lng}">
-                                <muxc:Image Source="{Binding Src}" Margin="21"/>
+                            <muxc:Button Command="{Binding DataContext.SetLngCmd,ElementName=LanguageSetup}" CommandParameter="{Binding Code}">
+                                <muxc:Image Source="{Binding ImgSrc}" Margin="21"/>
                             </muxc:Button>
                         </DataTemplate>
                     </muxc:ListBox.ItemTemplate>
