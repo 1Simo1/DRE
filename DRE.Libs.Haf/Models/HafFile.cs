@@ -4,17 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DRE.Libs.Trk.Models
+namespace DRE.Libs.Haf.Models
 {
-    public class TrkFile
+    public class HafFile
     {
         public int Id { get; set; }
         public String Name { get; set; }
-        public int trNumber { get; set; }
-
-        public bool IsFlipped { get; set; }
-
-
-
+        public int FrameNumber { get; set; }
+        public Byte[] Data { get; set; }
     }
 }

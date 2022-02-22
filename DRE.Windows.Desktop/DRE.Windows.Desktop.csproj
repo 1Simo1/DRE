@@ -46,5 +46,8 @@
 	  <PackageReference Include="Uno.Extensions.Reactive" Version="1.0.1" />
 	  <PackageReference Include="Uno.Extensions.Reactive.WinUI" Version="1.0.1" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DRE.Libs.Setup\DRE.Libs.Setup.csproj" />
+  </ItemGroup>
   <Import Project="..\DRE.Shared\DRE.Shared.projitems" Label="Shared" />
 </Project>

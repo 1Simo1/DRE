@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net6.0-windows10.0.18362.0</TargetFramework>
@@ -8,14 +8,17 @@
 
   <ItemGroup>
     <PackageReference Include="Dapper" Version="2.0.123" />
-    <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="6.0.2" />
+    <!--<PackageReference Include="Microsoft.Data.Sqlite.Core" Version="6.0.2" />-->
     <PackageReference Include="System.Data.SQLite" Version="1.0.115.5" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\DRE.Libs.Bpa\DRE.Libs.Bpa.csproj" />
+    <ProjectReference Include="..\DRE.Libs.Cfg\DRE.Libs.Cfg.csproj" />
+    <ProjectReference Include="..\DRE.Libs.Haf\DRE.Libs.Haf.csproj" />
     <ProjectReference Include="..\DRE.Libs.Lng\DRE.Libs.Lng.csproj" />
-    <ProjectReference Include="..\Dre.Libs.Trk\Dre.Libs.Trk.csproj" />
+    <ProjectReference Include="..\DRE.Libs.SaveGame\DRE.Libs.SaveGame.csproj" />
+    <ProjectReference Include="..\DRE.Libs.Trk\DRE.Libs.Trk.csproj" />
   </ItemGroup>
 
 </Project>

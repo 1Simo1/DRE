@@ -86,9 +86,10 @@ namespace DRE
                     .ConfigureServices(services =>
                     {
                         services
+                      
+                        .AddSingleton<ISetupSvc, SetupSvc>();
 
-                            .AddSingleton<ISetupSvc, SetupSvc>();
-                          
+
                     })
 
 

@@ -1,7 +1,7 @@
 ﻿using DRE.Interfaces;
-using System;
+using DRE.Libs.Lng.Models;
+using DRE.Libs.Setup;
 using System.Collections.Generic;
-using System.Text;
 
 namespace DRE.Services
 {
@@ -9,6 +9,7 @@ namespace DRE.Services
     {
 
         private bool _s;
+        private readonly LibSetup _lib;
 
         public bool Setup
         {
@@ -16,12 +17,15 @@ namespace DRE.Services
             set { _s = value; }
         }
 
-  
-
         public SetupSvc()
         {
+            _lib = new LibSetup();
 
+            Setup = _lib.testSetup();
+           
         }
 
+        public List<Localization> LoadLngList() => _lib.LngList();
+       
     }
 }

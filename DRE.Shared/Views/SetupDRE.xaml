@@ -6,9 +6,63 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
+      xmlns:utu="using:Uno.Toolkit.UI"
+	  xmlns:uen="using:Uno.Extensions.Navigation.UI"
+	  xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     Background="{ThemeResource MaterialBackgroundBrush}">
 
-    <Grid>
-        <TextBlock Text="Setup" />
-    </Grid>
+    <muxc:Grid Margin="21">
+        <muxc:Grid.RowDefinitions>
+            <muxc:RowDefinition Height="Auto" />
+            <muxc:RowDefinition />
+            <muxc:RowDefinition Height="Auto" />
+        </muxc:Grid.RowDefinitions>
+        <muxc:Grid Background="LightGray" Grid.Row="0">
+            <muxc:Grid.ColumnDefinitions>
+                <muxc:ColumnDefinition Width="Auto" />
+                <muxc:ColumnDefinition Width="Auto" />
+                <muxc:ColumnDefinition />
+            </muxc:Grid.ColumnDefinitions>
+            <muxc:Image Grid.Column="0" Margin="21" Source="ms-appx:///Assets/Icons/DRE.ico"/>
+            <muxc:TextBlock Grid.Column="1" 
+                            VerticalAlignment="Center" 
+                            HorizontalAlignment="Center"
+                            FontSize="63"
+                            FontWeight="Thin"
+                            >
+                DR EDITOR - SETUP
+            </muxc:TextBlock>
+
+        </muxc:Grid>
+        <muxc:Grid Grid.Row="1" Background="Transparent" Margin="21">
+            <muxc:Grid.RowDefinitions>
+                <muxc:RowDefinition Height="Auto" />
+                <muxc:RowDefinition />
+            </muxc:Grid.RowDefinitions>
+            <muxc:StackPanel Orientation="Vertical" 
+                             HorizontalAlignment="Center" 
+                             VerticalAlignment="Center" 
+                             Background="AliceBlue"
+                             Grid.Row="0"
+                             >
+
+                <muxc:ListBox VerticalAlignment="Center" Background="Transparent" ItemsSource="{Binding LngList,Mode=TwoWay}">
+                    <muxc:ListBox.ItemsPanel>
+                        <muxc:ItemsPanelTemplate>
+                            <muxc:VirtualizingStackPanel Orientation="Horizontal"/>
+                        </muxc:ItemsPanelTemplate>
+                    </muxc:ListBox.ItemsPanel>
+                    <muxc:ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <muxc:Button Command="{Binding SetLngCmd}" CommandParameter="{Binding Lng}">
+                                <muxc:Image Source="{Binding Src}" Margin="21"/>
+                            </muxc:Button>
+                        </DataTemplate>
+                    </muxc:ListBox.ItemTemplate>
+                </muxc:ListBox>
+
+            </muxc:StackPanel>
+        </muxc:Grid>
+        <muxc:StackPanel Grid.Row="2" Background="Teal" />
+    </muxc:Grid>
 </Page>

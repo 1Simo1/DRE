@@ -1,10 +1,9 @@
-﻿using Dre.Libs.Trk.Models;
+﻿using DRE.Libs.Trk.Models;
 
-namespace Dre.Libs.Trk
+namespace DRE.Libs.Trk
 {
     public class LibTrk
     {
-
         private String dir { get; set; }    
         public LibTrk(String gameFolderPath)
         {
@@ -37,8 +36,51 @@ namespace Dre.Libs.Trk
 
             return trk;
         }
-    
-        
-    
+
+        public List<TrkRecord> defaultTrackRecords()
+        {
+            List<TrkRecord> crd = new List<TrkRecord>();
+
+            String[] cars = new String[6] { "VAGABOND", "DERVISH", "SENTINEL", "SHRIEKER", "WRAITH", "DELIVERATOR" };
+
+            if (File.Exists($"{dir}/dr.cfg"))
+            {
+                byte[] file = System.IO.File.ReadAllBytes($"{dir}/dr.cfg");
+                using (MemoryStream m = new MemoryStream(file))
+                {
+                    using (BinaryReader b = new BinaryReader(m))
+                    {
+                        b.ReadBytes(86);
+                        byte[] rd;
+                        string nm;
+                        Int16 t;
+                        string c;
+                        for (short i = 1; i <= 108; i++)
+                        {
+                            rd = b.ReadBytes(12);
+                            nm = "";
+                            for (int n = 0; n < rd.Length; n++) { if (rd[n] != 0) nm += (char)rd[n]; }
+                            t = (Int16)(b.ReadInt32() * 6000 + b.ReadInt32() * 100 + b.ReadInt32());
+                            c = cars[(int)(Math.Floor((decimal)(i - 1) / 18))];
+
+                            crd.Add(new TrkRecord()
+                            {
+                                Id = i,
+                                TrkId = (int)(Math.Floor((decimal)(i - 1) % 18)) + 1,
+                                Car = c,
+                                Name = nm,
+                                LapTime = t
+                            });
+
+
+                        }
+                    }
+                }
+            }
+
+
+            return crd;
+
+        }
     }
 }

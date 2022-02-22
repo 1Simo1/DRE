@@ -5,8 +5,15 @@ using DRE.Libs.Setup.Models;
 using DRE.Libs.Lng;
 using DRE.Libs.Bpa;
 using DRE.Libs.Bpa.Models;
-using Dre.Libs.Trk;
-using Dre.Libs.Trk.Models;
+using DRE.Libs.Trk;
+using DRE.Libs.Trk.Models;
+using DRE.Libs.Cfg;
+using DRE.Libs.Cfg.Models;
+using DRE.Libs.Haf;
+using DRE.Libs.Haf.Models;
+using DRE.Libs.SaveGame;
+using DRE.Libs.SaveGame.Models;
+using DRE.Libs.Lng.Models;
 
 namespace DRE.Libs.Setup
 {
@@ -22,6 +29,9 @@ namespace DRE.Libs.Setup
         private LibLng T;
         private LibBpa Bpa;
         private LibTrk Trk;
+        private LibCfg Cfg;
+        private LibHaf Haf;
+        private SaveGameLib Sg;
 
         private IDbConnection db = null;
 
@@ -30,8 +40,6 @@ namespace DRE.Libs.Setup
         {
             testDir($"{AppDomain.CurrentDomain.BaseDirectory}db");
             T = new LibLng();
-            Bpa = new LibBpa();
-
         }
 
         private String testDir(String dir)
@@ -50,7 +58,7 @@ namespace DRE.Libs.Setup
         {
             try {
                 
-                if (db == null) db = new SQLiteConnection($"{AppDomain.CurrentDomain.BaseDirectory}db/DRE.db");
+                if (db == null) db = new SQLiteConnection($"Data Source={AppDomain.CurrentDomain.BaseDirectory}db/DRE.db");
                 return db.Query<int>("SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite%'").First();
             
             } catch (Exception ex) { return 0; }
@@ -58,9 +66,6 @@ namespace DRE.Libs.Setup
 
         public async Task Setup(String p_dre, String c_dre, IProgress<SetupProgress> x)
         {
-
-            
-
             int i = Init();
 
             try
@@ -76,12 +81,14 @@ namespace DRE.Libs.Setup
                     db.Query("INSERT INTO dre(n,v) VALUES (@n,@v)", new { n = "c_dre", v = c_dre });
                     db.Query("INSERT INTO dre(n,v) VALUES (@n,@v)", new { n = "dre_v", v = dre_v });
 
-                    x.Report(new SetupProgress() { msg = T._("setup"), p = 100 / tot_tabs });
+                    x.Report(new SetupProgress() { msg = T._("setup"), p = i * 100 / tot_tabs });
                 } // dre
 
                 if (i <= 1)
                 {
-                    x.Report(new SetupProgress() { msg = T._("setup_bpa"), p = 100 / tot_tabs });
+                    x.Report(new SetupProgress() { msg = T._("setup_bpa"), p = i * 100 / tot_tabs });
+
+                    Bpa = new LibBpa();
 
                     var bpa_list = Bpa.List(c_dre);
 
@@ -135,7 +142,7 @@ namespace DRE.Libs.Setup
                 if (i <= 3)
                 {
 
-                    x.Report(new SetupProgress() { msg = T._("setup_cfg"), p = 100 * Init() / tot_tabs });
+                    x.Report(new SetupProgress() { msg = T._("setup_cfg"), p = 100 * i / tot_tabs });
 
                     Trk = new LibTrk(c_dre);
 
@@ -156,17 +163,19 @@ namespace DRE.Libs.Setup
                     }
 
                     db.Query("CREATE TABLE IF NOT EXISTS crd(id INTEGER PRIMARY KEY, trk INTEGER NOT NULL, c text NOT NULL, n text NOT NULL, t TEXT)");
-                    Dictionary<short, Tuple<int, string, string, Int16>> rd = Trk.defaultTrackRecords();
+                   // Dictionary<short, Tuple<int, string, string, Int16>> rd = Trk.defaultTrackRecords();
 
-                    foreach (KeyValuePair<short, Tuple<int, string, string, Int16>> crd in rd)
+                    List<TrkRecord> rd = Trk.defaultTrackRecords();
+
+                    foreach (var crd in rd)
                     {
                         db.Query("INSERT INTO crd VALUES (@id,@trk,@c,@n,@t)", new
                         {
-                            id = crd.Key,
-                            trk = crd.Value.Item1,
-                            c = crd.Value.Item2,
-                            n = crd.Value.Item3,
-                            t = ((decimal)crd.Value.Item4 / 100).ToString()
+                            id = crd.Id,
+                            trk = crd.TrkId,
+                            c = crd.Car,
+                            n = crd.Name,
+                            t = ((decimal)crd.LapTime / 100).ToString()
                         });
                     }
 
@@ -174,21 +183,24 @@ namespace DRE.Libs.Setup
 
                     db.Query("CREATE TABLE IF NOT EXISTS trk_files(id INTEGER PRIMARY KEY, trk INTEGER NOT NULL,NF text NOT NULL,n INTEGER,d BLOB NOT NULL,UNIQUE(trk,NF,n))");
 
-                    Cfg cfg = new Cfg(this.c_dre);
-                    Dictionary<short, Tuple<string, int, short>> cfg_hof = cfg.Hof();
+                    Cfg = new LibCfg(c_dre);
+
+                    //Dictionary<short, Tuple<string, int, short>> cfg_hof = cfg.Hof();
+
+                    List<HofEntry> cfg_hof = Cfg.Hof();
 
                     db.Query("CREATE TABLE IF NOT EXISTS cfg(id INTEGER PRIMARY KEY, info TEXT,v INTEGER)");
 
                     db.Query("CREATE TABLE IF NOT EXISTS hof(pos INTEGER PRIMARY KEY, n TEXT, tr INTEGER NOT NULL,lv INTEGER NOT NULL)");
 
-                    foreach (KeyValuePair<short, Tuple<string, int, short>> hof in cfg_hof)
+                    foreach (var hof in cfg_hof)
                     {
                         db.Query("INSERT INTO hof VALUES (@id,@n,@tr,@lv)", new
                         {
-                            id = hof.Key,
-                            n = hof.Value.Item1,
-                            tr = hof.Value.Item2,
-                            lv = hof.Value.Item3
+                            id = hof.Id,
+                            n = hof.Name,
+                            tr = hof.TotalRaces,
+                            lv = hof.Level
                         });
                     }
 
@@ -198,53 +210,54 @@ namespace DRE.Libs.Setup
 
                 if (i <= 9)
                 {
-                    x.Report(new SetupProgress() { msg = T._("setup_haf"), p = 100 * Init() / tot_tabs });
+                    x.Report(new SetupProgress() { msg = T._("setup_haf"), p = 100 * i / tot_tabs });
 
-                    Haf haf = new Haf(c_dre);
-                    Dictionary<short, Tuple<string, int, byte[]>> lhaf = haf.Init();
+                    Haf = new LibHaf(c_dre);
+
+                    List<HafFile> lhaf = Haf.Init();
 
                     db.Query("CREATE TABLE IF NOT EXISTS haf(id INTEGER PRIMARY KEY, nf TEXT NOT NULL, n INTEGER NOT NULL,d BLOB)");
 
-                    foreach (KeyValuePair<short, Tuple<string, int, byte[]>> fhaf in lhaf)
+                    foreach (var fhaf in lhaf)
                     {
                         db.Query("INSERT INTO haf(id,nf,n,d) VALUES(@id,@nf,@n,@d)", new
                         {
-                            id = fhaf.Key,
-                            nf = fhaf.Value.Item1,
-                            n = fhaf.Value.Item2,
-                            d = fhaf.Value.Item3
+                            id = fhaf.Id,
+                            nf = fhaf.Name,
+                            n = fhaf.FrameNumber,
+                            d = fhaf.Data
                         });
                     }
-
 
                 } // HAF
 
 
                 if (i <= 10)
                 {
-                    x.Report(new SetupProgress() { msg = T._("setup_sg"), p = 100 * Init() / tot_tabs });
+                    x.Report(new SetupProgress() { msg = T._("setup_sg"), p = 100 * i / tot_tabs });
                     db.Query("CREATE TABLE IF NOT EXISTS sg(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,nf TEXT,p INTEGER,n INTEGER,v INTEGER,t TEXT, UNIQUE(nf,p,n))");
 
-                    Sg sg = new Sg(this.c_dre);
-                    Dictionary<int, Tuple<string, int, int, int, string>> sgd = sg.Init();
+                    Sg = new SaveGameLib(c_dre);
+
+                    List<SaveGameEntry> sgd = Sg.Init();
 
 
-                    foreach (KeyValuePair<int, Tuple<string, int, int, int, string>> sd in sgd)
+                    foreach (var sd in sgd)
                     {
                         db.Query("INSERT INTO sg(nf, p, n, v, t) VALUES(@nf, @p, @n, @v, @t)", new
                         {
-                            nf = sd.Value.Item1,
-                            p = sd.Value.Item2,
-                            n = sd.Value.Item3,
-                            v = sd.Value.Item4,
-                            t = sd.Value.Item5
+                            nf = sd.FileName,
+                            p = sd.Position,
+                            n = sd.AttributeNumber,
+                            v = sd.Value,
+                            t = sd.ValueText
                         });
                     }
                 } // SG
 
                 if (i <= 11)
                 {
-                    x.Report(new SetupProgress() { msg = T._("setup_def"), p = 100 * Init() / tot_tabs });
+                    x.Report(new SetupProgress() { msg = T._("setup_def"), p = 100 * i / tot_tabs });
 
                     db.Query("CREATE TABLE IF NOT EXISTS exp(id INTEGER PRIMARY KEY,d BLOB,w INTEGER NOT NULL,h INTEGER NOT NULL,rix BOOLEAN)");
                     db.Query("CREATE TABLE IF NOT EXISTS pal(id INTEGER PRIMARY KEY,d BLOB)");
@@ -279,6 +292,6 @@ namespace DRE.Libs.Setup
             catch (Exception e) { }
         }
 
-
+        public List<Localization> LngList() => T.LngList();
     }
 }
