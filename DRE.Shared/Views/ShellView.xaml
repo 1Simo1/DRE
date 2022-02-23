@@ -1,6 +1,10 @@
-<UserControl x:Class="DRE.Views.ShellView"
+<ContentDialog x:Class="DRE.Views.ShellView"
 			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-			 xmlns:uen="using:Uno.Extensions.Navigation.UI">
-	<Frame uen:Region.Attached="true" />
-</UserControl>
+			 xmlns:uen="using:Uno.Extensions.Navigation.UI"
+             MinWidth="{Binding Width,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"
+             MinHeight="{Binding Height,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"
+             >
+   
+	<Frame uen:Region.Attached="true"/>
+</ContentDialog>

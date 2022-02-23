@@ -19,6 +19,9 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Interfaces\ISetupSvc.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)MarkupExtensions\DRETranslation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\Config.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\ConfigSvc.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\SetupSvc.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\HomeViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\SetupDREViewModel.cs" />
@@ -73,7 +76,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Assets\Icons\" />
-    <Folder Include="$(MSBuildThisFileDirectory)Models\" />
     <Folder Include="$(MSBuildThisFileDirectory)Styles\" />
   </ItemGroup>
 </Project>

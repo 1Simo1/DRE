@@ -29,6 +29,13 @@ namespace DRE.Libs.Lng
 
                 LocalizationSetupHelper();
 
+            } else if (String.IsNullOrEmpty(L))
+            {
+                XmlReader d = XmlReader.Create($"{dir}/default.xml");
+                d.Read(); // <xml>
+                d.Read(); // <default>
+                d.Read(); // Default Language Code
+                setLng(d.Value);
             }
         }
 
@@ -78,7 +85,7 @@ namespace DRE.Libs.Lng
             list.Add(new Localization()
             {
                 Code = "IT",
-                ImgSrc = $"{dir}/IT.PNG"
+                ImgSrc = $"{dir}/IT.png"
             });
 
             foreach (String lng in LngFiles)
@@ -91,7 +98,7 @@ namespace DRE.Libs.Lng
                     list.Add(new Localization()
                     {
                         Code = code,
-                        ImgSrc = $"{dir}/{code.ToUpper()}.PNG"
+                        ImgSrc = $"{dir}/{code.ToUpper()}.png"
                     });
                 } 
 

@@ -4,7 +4,8 @@
 			 xmlns:wasm="http://platform.uno/wasm"
 			 xmlns:local="using:DRE"
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-			 mc:Ignorable="wasm">
+			 mc:Ignorable="wasm"
+             >
 
 	<Application.Resources>
 		<ResourceDictionary>

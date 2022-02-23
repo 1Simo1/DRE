@@ -15,6 +15,7 @@ using Uno.Extensions.Serialization;
 using DRE.Views;
 using DRE.Interfaces;
 using DRE.Services;
+using DRE.Models;
 
 #if WINUI
 using Windows.ApplicationModel;
@@ -46,6 +47,9 @@ namespace DRE
 
         public App()
         {
+
+
+
             Host = UnoHost
                     .CreateDefaultBuilder(true)
 #if DEBUG
@@ -78,6 +82,11 @@ namespace DRE
                     // Load configuration information from appsettings.json
                     .UseAppSettings()
 
+                    .UseEmbeddedAppSettings<App>(includeEnvironmentSettings: true)
+
+                    .UseConfiguration<Config>()
+
+
 
                     // Register Json serializers (ISerializer and IStreamSerializer)
                     .UseSerialization()
@@ -86,8 +95,9 @@ namespace DRE
                     .ConfigureServices(services =>
                     {
                         services
-                      
-                        .AddSingleton<ISetupSvc, SetupSvc>();
+
+                        .AddSingleton<ISetupSvc, SetupSvc>()
+                        .AddSingleton<ConfigSvc>();
 
 
                     })
@@ -102,12 +112,16 @@ namespace DRE
 
                     .Build(enableUnoLogging: true);
 
+
+
+
             this.InitializeComponent();
 
 #if HAS_UNO || NETFX_CORE
 			this.Suspending += OnSuspending;
 #endif
         }
+
 
         /// <summary>
         /// Invoked when the application is launched normally by the end user.  Other entry points
@@ -123,8 +137,10 @@ namespace DRE
             }
 #endif
 
+
 #if NET5_0 && WINDOWS
             _window = new Window();
+            _window.Title = "DRE";
             _window.Activate();
 #else
             _window = Window.Current;
@@ -134,9 +150,20 @@ namespace DRE
             notif.RouteChanged += RouteUpdated;
 
 
+
+
             if (_window == null) _window = new Window();
 
-            _window.Content = new ShellView().WithNavigation(Host.Services);
+            var setupSvc = Host.Services.GetService<ISetupSvc>();
+
+            _window.Content = setupSvc.Setup ? new HomePage().WithNavigation(Host.Services) :
+                                               new SetupDRE().WithNavigation(Host.Services);
+
+
+
+            _window.Title = $"{_window.Bounds.Width} x {_window.Bounds.Height}";
+
+            // _window.SizeChanged += TitleSize;
             _window.Activate();
 
             await Task.Run(async () =>
@@ -145,6 +172,15 @@ namespace DRE
             });
 
         }
+
+        //private void TitleSize(object sender, WindowSizeChangedEventArgs args)
+        //{
+
+        //    //var c = Host.Services.GetService<IOptions<App>>();
+
+        //    //_window.Title = c.Value.Title;
+
+        //}
 
         /// <summary>
         /// Invoked when Navigation to a certain page fails
@@ -173,8 +209,8 @@ namespace DRE
         private static void RegisterRoutes(IRouteBuilder builder)
         {
             builder
-                .Register(RouteMap.For(nameof(ShellView)))
-                .Register(ViewMap.For(nameof(ShellView)).Show<ShellView>().With<ShellViewModel>())
+                //.Register(RouteMap.For(nameof(ShellView)))
+                //.Register(ViewMap.For(nameof(ShellView)).Show<ShellView>().With<ShellViewModel>())
                 .Register(ViewMap.For("Home").Show<HomePage>().With<HomeViewModel>())
                 .Register(ViewMap.For("Setup").Show<SetupDRE>().With<SetupDREViewModel>());
 
