@@ -25,6 +25,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Services\SetupSvc.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\HomeViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\SetupDREViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\SetupLngViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ShellViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\VM.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Views\HomePage.xaml.cs">
@@ -33,8 +34,11 @@
     <Compile Include="$(MSBuildThisFileDirectory)Views\SetupDRE.xaml.cs">
       <DependentUpon>SetupDRE.xaml</DependentUpon>
     </Compile>
-    <Compile Include="$(MSBuildThisFileDirectory)Views\ShellView.xaml.cs">
-      <DependentUpon>ShellView.xaml</DependentUpon>
+    <Compile Include="$(MSBuildThisFileDirectory)Views\SetupLanguage.xaml.cs">
+      <DependentUpon>SetupLanguage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Views\Shell.xaml.cs">
+      <DependentUpon>Shell.xaml</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)_Compat\IsExternalInit.cs" />
   </ItemGroup>
@@ -55,7 +59,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="$(MSBuildThisFileDirectory)Views\ShellView.xaml">
+    <Page Include="$(MSBuildThisFileDirectory)Views\SetupLanguage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Views\Shell.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -1,38 +1,24 @@
-using DRE.Interfaces;
-using DRE.Services;
+﻿using DRE.Interfaces;
+using System;
+using System.Collections.Generic;
+using System.Text;
 using Uno.Extensions.Navigation;
 
 namespace DRE.ViewModels
 {
     public class ShellViewModel : VM
     {
+
         private INavigator Navigator { get; }
- 
-        public int Width { get; set; }
-      
-        public int Height { get; set; }
-      
-
-
-        public ShellViewModel(INavigator navigator, ISetupSvc setupSvc, ConfigSvc c)
+        public ShellViewModel(ISetupSvc setupSvc, INavigator navigator)
         {
-
-            Width = c.config.SavedWidth;
-
-            Height = c.config.SavedHeight;
-
             Navigator = navigator;
-
-            
 
             if (setupSvc.Setup)
             {
                 Navigator.NavigateViewModelAsync<HomeViewModel>(this);
-            }
-            else Navigator.NavigateViewModelAsync<SetupDREViewModel>(this);
+            } else Navigator.NavigateViewModelAsync<SetupLngViewModel>(this);
 
         }
-
-
     }
 }

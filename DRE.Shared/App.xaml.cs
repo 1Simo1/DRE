@@ -12,10 +12,12 @@ using Uno.Extensions.Navigation.UI;
 using Uno.Extensions.Navigation.Regions;
 using Uno.Extensions.Navigation.Toolkit;
 using Uno.Extensions.Serialization;
+using Uno.Toolkit;
 using DRE.Views;
 using DRE.Interfaces;
 using DRE.Services;
 using DRE.Models;
+using Microsoft.UI.Xaml.Controls;
 
 #if WINUI
 using Windows.ApplicationModel;
@@ -41,7 +43,7 @@ namespace DRE
     public sealed partial class App : Application
     {
         private Window _window;
-        public Window Window => _window;
+        //public Window Window => _window;
 
         private IHost Host { get; }
 
@@ -122,6 +124,8 @@ namespace DRE
 #endif
         }
 
+    
+
 
         /// <summary>
         /// Invoked when the application is launched normally by the end user.  Other entry points
@@ -130,57 +134,56 @@ namespace DRE
         /// <param name="args">Details about the launch request and process.</param>
         protected async override void OnLaunched(LaunchActivatedEventArgs args)
         {
-#if DEBUG
-            if (System.Diagnostics.Debugger.IsAttached)
-            {
-                // this.DebugSettings.EnableFrameRateCounter = true;
-            }
-#endif
 
-
-#if NET5_0 && WINDOWS
-            _window = new Window();
-            _window.Title = "DRE";
-            _window.Activate();
-#else
-            _window = Window.Current;
-#endif
+            //base.OnLaunched(args);
 
             var notif = Host.Services.GetService<IRouteNotifier>();
             notif.RouteChanged += RouteUpdated;
 
+           
 
+            var c = Host.Services.GetService<ConfigSvc>();
 
+            _window = Window.Current != null ? Window.Current : new Window();
 
-            if (_window == null) _window = new Window();
-
+#if HAS_UNO_SKIA
+            
+            
             var setupSvc = Host.Services.GetService<ISetupSvc>();
 
+            _window.Title = c.config.Title;
+
+
+
+           
+
             _window.Content = setupSvc.Setup ? new HomePage().WithNavigation(Host.Services) :
-                                               new SetupDRE().WithNavigation(Host.Services);
+                                               new SetupLanguage().WithNavigation(Host.Services);
 
 
 
-            _window.Title = $"{_window.Bounds.Width} x {_window.Bounds.Height}";
+#else
+            var f = new Frame();
+            f.AttachServiceProvider(Host.Services);
+            _window.Title = c.config.Title;
+            _window.Content = f;
 
-            // _window.SizeChanged += TitleSize;
+            f.NavigationFailed += OnNavigationFailed;
+
+            f.Navigate(typeof(Shell));
+#endif
+
             _window.Activate();
 
-            await Task.Run(async () =>
-            {
-                await Host.StartAsync();
-            });
+            await Task.Run(() => Host.StartAsync());
+
+
+
 
         }
 
-        //private void TitleSize(object sender, WindowSizeChangedEventArgs args)
-        //{
+       
 
-        //    //var c = Host.Services.GetService<IOptions<App>>();
-
-        //    //_window.Title = c.Value.Title;
-
-        //}
 
         /// <summary>
         /// Invoked when Navigation to a certain page fails
@@ -206,24 +209,54 @@ namespace DRE
             deferral.Complete();
         }
 
+#if HAS_UNO_SKIA
+
         private static void RegisterRoutes(IRouteBuilder builder)
         {
             builder
                 //.Register(RouteMap.For(nameof(ShellView)))
                 //.Register(ViewMap.For(nameof(ShellView)).Show<ShellView>().With<ShellViewModel>())
                 .Register(ViewMap.For("Home").Show<HomePage>().With<HomeViewModel>())
+                .Register(ViewMap.For("SetupLng").Show<SetupLanguage>().With<SetupLngViewModel>())
                 .Register(ViewMap.For("Setup").Show<SetupDRE>().With<SetupDREViewModel>());
 
 
         }
+#else
 
-        public async void RouteUpdated(object sender, EventArgs e)
+        private void RegisterRoutes(IViewRegistry views, IRouteRegistry routes)
+        {
+            views.Register(new ViewMap(ViewModel: typeof(ShellViewModel)),
+                new ViewMap<SetupLanguage,SetupLngViewModel>(),
+                new ViewMap<SetupDRE, SetupDREViewModel>(),
+                new ViewMap<HomePage, HomeViewModel>()
+                );
+
+            routes.Register(
+                 views =>
+                 new RouteMap("Shell", View: views.FindByViewModel<ShellViewModel>(),
+                 Nested: new[]
+                 {
+                    new RouteMap("SetupLng", views.FindByView<SetupLanguage>()),
+                    new RouteMap("Setup", views.FindByView<SetupDRE>()),
+                    new RouteMap("Home",View: views.FindByView<HomePage>()),
+                   
+                 }));
+
+
+        }
+
+
+#endif
+#if !HAS_UNO_SKIA
+        public async void RouteUpdated(object sender, RouteChangedEventArgs e)
         {
             try
             {
-                var reg = Host.Services.GetService<IRegion>();
-                var rootRegion = reg.Root();
+                var rootRegion = e.Region.Root();
                 var route = rootRegion.GetRoute();
+
+            
 
 
 #if !__WASM__ && !WINUI
@@ -256,5 +289,16 @@ namespace DRE
                 Console.WriteLine("Error: " + ex.Message);
             }
         }
+#endif
+
+#if HAS_UNO_SKIA
+        private void RouteUpdated(object sender, EventArgs e)
+        {
+            
+        }
+
+#endif
+
+
     }
 }

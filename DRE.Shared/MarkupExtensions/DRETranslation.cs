@@ -1,41 +1,52 @@
-﻿using DRE.Libs.Lng;
+﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using Dapper;
+using DRE.Interfaces;
+using DRE.Libs.Lng;
+using DRE.Libs.Setup;
+using DRE.Services;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Markup;
 using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Linq;
+using System.Xml;
 
 namespace DRE.MarkupExtensions
 {
-    [MarkupExtensionReturnType(ReturnType = typeof(String))]
-    public class DRETranslation : MarkupExtension
+    public class DRETranslation : IValueConverter
     {
         public String _ { get; set; }
 
-        private String T { get; set; }
-
         private LibLng Lng { get; set; }
 
-        public DRETranslation() { 
-        
-            if (Lng == null) Lng = new LibLng();
-        }
- 
-        //public DRETranslation(String textCodeToTranslate) => _ = textCodeToTranslate;
- 
-        protected override object ProvideValue(IXamlServiceProvider serviceProvider)
+        private String dir = $"{AppDomain.CurrentDomain.BaseDirectory}db/locale";
+
+        private String L { get; set; }
+
+        public DRETranslation()
         {
-            try
-            {
-                T = Lng._(_);
-            }
-            catch (Exception) { T = _; }
+            //if (SetupSvc == null) SetupSvc = new LibSetup();
 
-            return T;
+          if (Lng == null) Lng = new LibLng();
+
         }
 
-        public override string ToString() => Lng._(_);
-       
 
+       // public override string ToString() => 
+        //    Lng._(_, DRE.Libs.Setup.LibSetup.db.Query<String>("SELECT v FROM DRE WHERE n='defaultLanguage'").AsList().First());
+
+        public object Convert(object value, Type targetType, object p, string language)
+        {
+
+            if (L == null) L =  DRE.Libs.Setup.LibSetup.db.Query<String>("SELECT v FROM DRE WHERE n='defaultLanguage'").AsList().First();
+
+            return Lng._(value.ToString(), L.ToUpper());
+
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            return null;
+        }
     }
 }

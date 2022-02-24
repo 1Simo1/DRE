@@ -25,7 +25,7 @@ namespace DRE.Libs.Lng
                 writer.WriteEndElement();
                 writer.Close();
 
-                setLng("it");
+                //setLng("it");
 
                 LocalizationSetupHelper();
 
@@ -36,18 +36,30 @@ namespace DRE.Libs.Lng
                 d.Read(); // <default>
                 d.Read(); // Default Language Code
                 setLng(d.Value);
+                d.Close();
             }
         }
 
-        public void setLng(String newLanguageCode) => L = newLanguageCode;
+        public void setLng(String newLanguageCode)
+        {
+            L = newLanguageCode;
+
+          
+
+        }
+        public String SelectedLanguageCode() => L;
+    
 
         /// <summary>
         /// Translation method
         /// </summary>
         /// <param name="id">String code to localize</param>
+        /// <param name="languageCode">Optional parameter, default null for default language</param>
         /// <returns>Localized string (if id not found returns id string)</returns>
-        public String _(String id)
+        public String _(String id, String languageCode=null)
         {
+            if (!String.IsNullOrEmpty(languageCode)) L = languageCode;
+
             if (!Directory.Exists(dir) || String.IsNullOrEmpty(L) || !File.Exists($"{dir}/{L.ToUpper()}.xml")) return id;
 
             XmlReader d = XmlReader.Create($"{dir}/{L.ToUpper()}.xml");
@@ -445,5 +457,7 @@ namespace DRE.Libs.Lng
             fpng.Close();
             #endregion
         }
+
+       
     }
 }

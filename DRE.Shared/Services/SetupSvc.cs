@@ -1,7 +1,10 @@
-﻿using DRE.Interfaces;
+﻿using Dapper;
+using DRE.Interfaces;
 using DRE.Libs.Lng.Models;
 using DRE.Libs.Setup;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace DRE.Services
 {
@@ -26,6 +29,10 @@ namespace DRE.Services
         }
 
         public List<Localization> LoadLngList() => _lib.LngList();
-       
+
+        public void SetupLanguage(String languageCode) => _lib.SetupLanguage(languageCode);
+
+        public String SelectedLanguageCode() => _lib.SelectedLanguageCode();
+
     }
 }

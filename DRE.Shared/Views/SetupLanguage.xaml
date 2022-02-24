@@ -1,0 +1,50 @@
+﻿<Page
+    x:Class="DRE.Views.SetupLanguage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:DRE.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+     <Grid Margin="21">
+
+        <StackPanel Orientation="Vertical"      
+                             HorizontalAlignment="Center" 
+                             VerticalAlignment="Center" 
+                             Background="AliceBlue"
+                             Grid.Row="1"
+                             Name="LanguageSetup"
+                             >
+            <ListBox VerticalAlignment="Center" Background="Transparent" ItemsSource="{Binding LngList,Mode=TwoWay}">
+                    <ListBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal"/>
+                        </ItemsPanelTemplate>
+                    </ListBox.ItemsPanel>
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+
+                            <Button Command="{Binding DataContext.SetLngCmd,ElementName=LanguageSetup}" CommandParameter="{Binding Code}" Margin="21,0">
+                                <Grid>
+                                <TextBlock   Text="{Binding Code}"
+                                                  VerticalAlignment="Center" 
+                                                  HorizontalAlignment="Center"
+                                                  FontSize="21"
+                                                  FontWeight="Thin"/>
+                                <Image>
+                                    <Image.Source>
+                                        <BitmapImage UriSource="{Binding ImgSrc,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" DecodePixelWidth="64" />
+                                    </Image.Source>
+                                </Image>
+                                </Grid>
+                            </Button>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+
+            </StackPanel>
+   
+    </Grid>
+</Page>

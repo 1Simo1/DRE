@@ -14,6 +14,7 @@ using DRE.Libs.Haf.Models;
 using DRE.Libs.SaveGame;
 using DRE.Libs.SaveGame.Models;
 using DRE.Libs.Lng.Models;
+using System.Xml;
 
 namespace DRE.Libs.Setup
 {
@@ -33,13 +34,14 @@ namespace DRE.Libs.Setup
         private LibHaf Haf;
         private SaveGameLib Sg;
 
-        private IDbConnection db = null;
+        public static IDbConnection db = null;
 
         public int tot_tabs = 14;
         public LibSetup()
         {
             testDir($"{AppDomain.CurrentDomain.BaseDirectory}db");
             T = new LibLng();
+            Setup("", "", null);
         }
 
         private String testDir(String dir)
@@ -73,19 +75,34 @@ namespace DRE.Libs.Setup
                 db = new SQLiteConnection(cs);
 
 
-                if (i == 0)
+                if (i <= 1)
                 {
                     db.Query("CREATE TABLE IF NOT EXISTS dre(id INTEGER PRIMARY KEY AUTOINCREMENT, n TEXT NOT NULL UNIQUE, v TEXT)");
 
+                  
+
+                    if (String.IsNullOrEmpty(p_dre)) {
+
+
+                        db.Query("INSERT INTO dre(n,v) VALUES (@n,@v)", new { n = "dre_v", v = dre_v });
+
+                        String dir = $"{AppDomain.CurrentDomain.BaseDirectory}db/locale";
+                        XmlReader d = XmlReader.Create($"{dir}/default.xml");
+                        d.Read(); // <xml>
+                        d.Read(); // <default>
+                        d.Read(); // Default Language Code
+                        db.Query("INSERT INTO dre(n,v) VALUES (@n,@v)", new { n = "defaultLanguage", v = d.Value });
+                        d.Close();
+                    }
+                    if (String.IsNullOrEmpty(p_dre)) return;
+
                     db.Query("INSERT INTO dre(n,v) VALUES (@n,@v)", new { n = "p_dre", v = p_dre });
                     db.Query("INSERT INTO dre(n,v) VALUES (@n,@v)", new { n = "c_dre", v = c_dre });
-                    db.Query("INSERT INTO dre(n,v) VALUES (@n,@v)", new { n = "dre_v", v = dre_v });
-
+                   
                     x.Report(new SetupProgress() { msg = T._("setup"), p = i * 100 / tot_tabs });
-                } // dre
+              
+                    //if (String.IsNullOrEmpty(p_dre)) return;
 
-                if (i <= 1)
-                {
                     x.Report(new SetupProgress() { msg = T._("setup_bpa"), p = i * 100 / tot_tabs });
 
                     Bpa = new LibBpa();
@@ -293,5 +310,11 @@ namespace DRE.Libs.Setup
         }
 
         public List<Localization> LngList() => T.LngList();
+
+        public void SetupLanguage(String languageCode) => T.setLng(languageCode);
+
+        public String SelectedLanguageCode() => T.SelectedLanguageCode();
+        
+
     }
 }

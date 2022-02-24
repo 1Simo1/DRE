@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.Input;
 using DRE.Interfaces;
 using DRE.Libs.Lng.Models;
 using DRE.Services;
+using DRE.Views;
 using Uno.Extensions.Navigation;
 
 namespace DRE.ViewModels
@@ -17,16 +18,17 @@ namespace DRE.ViewModels
 
         public int Height { get; set; }
 
-        public IRelayCommand<String> SetLngCmd { get; }
-
-        private ObservableCollection<Localization> _lngList;
+     
         private readonly ISetupSvc _setupSvc;
 
-        public ObservableCollection<Localization> LngList
+
+        private String _lc;
+        public String LanguageCode
         {
-            get { return _lngList; }
-            set { SetProperty(ref _lngList, value); }
+            get { return _lc; }
+            set { SetProperty(ref _lc, value); }
         }
+
 
         public SetupDREViewModel(ISetupSvc setupSvc, INavigator navigator, ConfigSvc c)
         {
@@ -36,15 +38,16 @@ namespace DRE.ViewModels
 
             Navigator = navigator;
 
-            LngList = new ObservableCollection<Localization>(setupSvc.LoadLngList());
-            SetLngCmd = new RelayCommand<String>(SetupLanguage);
+         
         
             _setupSvc = setupSvc;
+
+            LanguageCode = _setupSvc.SelectedLanguageCode();
+
         }
 
-        private void SetupLanguage(String languageCode)
-        {
-            
-        }
+     
+
+
     }
 }

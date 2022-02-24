@@ -17,5 +17,9 @@ namespace DRE.Interfaces
         /// </summary>
         /// <returns>List of available languages for editor</returns>
         public List<Localization> LoadLngList();
+
+        public void SetupLanguage(String SetupLanguage);
+
+        public String SelectedLanguageCode();
     }
 }
