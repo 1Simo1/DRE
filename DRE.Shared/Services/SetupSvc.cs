@@ -2,6 +2,7 @@
 using DRE.Interfaces;
 using DRE.Libs.Lng.Models;
 using DRE.Libs.Setup;
+using DRE.Libs.Setup.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,6 +34,8 @@ namespace DRE.Services
         public void SetupLanguage(String languageCode) => _lib.SetupLanguage(languageCode);
 
         public String SelectedLanguageCode() => _lib.SelectedLanguageCode();
+
+        public void SetupNewProject(String p_dre, String c_dre, IProgress<SetupProgress> x) => _lib.Setup(p_dre, c_dre, x);
 
     }
 }

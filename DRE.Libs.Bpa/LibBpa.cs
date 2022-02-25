@@ -52,7 +52,7 @@ namespace DRE.Libs.Bpa
             var nf = bpaName.Contains("BPA") ? bpaName : $"{bpaName}.BPA";
 
            
-            using (MemoryStream m = new MemoryStream(File.ReadAllBytes(nf)))
+            using (MemoryStream m = new MemoryStream(File.ReadAllBytes($"{dir}/{nf}")))
             {
                 using (BinaryReader b = new BinaryReader(m))
                 {

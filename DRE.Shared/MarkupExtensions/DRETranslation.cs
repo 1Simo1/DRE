@@ -1,15 +1,8 @@
-﻿using CommunityToolkit.Mvvm.DependencyInjection;
-using Dapper;
-using DRE.Interfaces;
+﻿using Dapper;
 using DRE.Libs.Lng;
-using DRE.Libs.Setup;
-using DRE.Services;
-using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Markup;
 using System;
 using System.Linq;
-using System.Xml;
 
 namespace DRE.MarkupExtensions
 {
@@ -27,18 +20,18 @@ namespace DRE.MarkupExtensions
         {
             //if (SetupSvc == null) SetupSvc = new LibSetup();
 
-          if (Lng == null) Lng = new LibLng();
+            if (Lng == null) Lng = new LibLng();
 
         }
 
 
-       // public override string ToString() => 
+        // public override string ToString() => 
         //    Lng._(_, DRE.Libs.Setup.LibSetup.db.Query<String>("SELECT v FROM DRE WHERE n='defaultLanguage'").AsList().First());
 
         public object Convert(object value, Type targetType, object p, string language)
         {
 
-            if (L == null) L =  DRE.Libs.Setup.LibSetup.db.Query<String>("SELECT v FROM DRE WHERE n='defaultLanguage'").AsList().First();
+            if (L == null) L = DRE.Libs.Setup.LibSetup.db.Query<String>("SELECT v FROM DRE WHERE n='defaultLanguage'").AsList().First();
 
             return Lng._(value.ToString(), L.ToUpper());
 

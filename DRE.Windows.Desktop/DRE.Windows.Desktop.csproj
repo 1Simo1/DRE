@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net6.0-windows10.0.18362.0</TargetFramework>
@@ -9,7 +9,11 @@
     <RuntimeIdentifiers>win10-x86;win10-x64;win10-arm64</RuntimeIdentifiers>
     <UseWinUI>true</UseWinUI>
     <DefineConstants>$(DefineConstants);WINUI</DefineConstants>
+    <ApplicationIcon>DRE.ico</ApplicationIcon>
   </PropertyGroup>
+  <ItemGroup>
+    <Content Include="DRE.ico" />
+  </ItemGroup>
   <ItemGroup>
     <Manifest Include="$(ApplicationManifest)" />
   </ItemGroup>

@@ -1,4 +1,5 @@
 ﻿using DRE.Libs.Lng.Models;
+using DRE.Libs.Setup.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -21,5 +22,7 @@ namespace DRE.Interfaces
         public void SetupLanguage(String SetupLanguage);
 
         public String SelectedLanguageCode();
+
+        public void SetupNewProject(String p_dre, String c_dre, IProgress<SetupProgress> x);
     }
 }

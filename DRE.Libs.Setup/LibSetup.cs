@@ -156,10 +156,12 @@ namespace DRE.Libs.Setup
                     }
                 } // BPA
 
+                if (String.IsNullOrEmpty(p_dre)) return;
+
                 if (i <= 3)
                 {
 
-                    x.Report(new SetupProgress() { msg = T._("setup_cfg"), p = 100 * i / tot_tabs });
+                    x.Report(new SetupProgress() { msg = T._("setup_cfg"), p = 300 / tot_tabs });
 
                     Trk = new LibTrk(c_dre);
 
@@ -227,7 +229,7 @@ namespace DRE.Libs.Setup
 
                 if (i <= 9)
                 {
-                    x.Report(new SetupProgress() { msg = T._("setup_haf"), p = 100 * i / tot_tabs });
+                    x.Report(new SetupProgress() { msg = T._("setup_haf"), p = 900 / tot_tabs });
 
                     Haf = new LibHaf(c_dre);
 
@@ -251,7 +253,7 @@ namespace DRE.Libs.Setup
 
                 if (i <= 10)
                 {
-                    x.Report(new SetupProgress() { msg = T._("setup_sg"), p = 100 * i / tot_tabs });
+                    x.Report(new SetupProgress() { msg = T._("setup_sg"), p = 1000 / tot_tabs });
                     db.Query("CREATE TABLE IF NOT EXISTS sg(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,nf TEXT,p INTEGER,n INTEGER,v INTEGER,t TEXT, UNIQUE(nf,p,n))");
 
                     Sg = new SaveGameLib(c_dre);
@@ -274,7 +276,7 @@ namespace DRE.Libs.Setup
 
                 if (i <= 11)
                 {
-                    x.Report(new SetupProgress() { msg = T._("setup_def"), p = 100 * i / tot_tabs });
+                    x.Report(new SetupProgress() { msg = T._("setup_def"), p = 1100 / tot_tabs });
 
                     db.Query("CREATE TABLE IF NOT EXISTS exp(id INTEGER PRIMARY KEY,d BLOB,w INTEGER NOT NULL,h INTEGER NOT NULL,rix BOOLEAN)");
                     db.Query("CREATE TABLE IF NOT EXISTS pal(id INTEGER PRIMARY KEY,d BLOB)");

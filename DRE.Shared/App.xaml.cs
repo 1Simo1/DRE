@@ -173,6 +173,8 @@ namespace DRE
             f.Navigate(typeof(Shell));
 #endif
 
+            
+
             _window.Activate();
 
             await Task.Run(() => Host.StartAsync());
