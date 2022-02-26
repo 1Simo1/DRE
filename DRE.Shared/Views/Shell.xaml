@@ -7,11 +7,12 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:uen="using:Uno.Extensions.Navigation.UI"
     mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    >
     
     <ContentControl     HorizontalAlignment="Stretch"
 						VerticalAlignment="Stretch"
 						HorizontalContentAlignment="Stretch"
 						VerticalContentAlignment="Stretch"
+                        Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
 						uen:Region.Attached="true" />
 </Page>

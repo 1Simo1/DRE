@@ -1,11 +1,9 @@
-﻿using Dapper;
-using DRE.Interfaces;
+﻿using DRE.Interfaces;
 using DRE.Libs.Lng.Models;
 using DRE.Libs.Setup;
 using DRE.Libs.Setup.Models;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace DRE.Services
 {
@@ -26,7 +24,7 @@ namespace DRE.Services
             _lib = new LibSetup();
 
             Setup = _lib.testSetup();
-           
+
         }
 
         public List<Localization> LoadLngList() => _lib.LngList();

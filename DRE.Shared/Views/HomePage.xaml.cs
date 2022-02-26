@@ -20,9 +20,15 @@ namespace DRE
 {
 	public sealed partial class HomePage : Page
     {
-        public HomePage()
-        {
-            this.InitializeComponent();
-        }
-	}
+        public HomePage() => InitializeComponent();
+        private void Resize_Nav_Panel(object sender, RoutedEventArgs e) => NavDRE.Width = NavDRE.ActualWidth > 48 ? 48 : NavDREWideWidth;
+     
+        private void ToggleTheme(object sender, RoutedEventArgs e) => 
+            RequestedTheme = RequestedTheme == ElementTheme.Dark ? ElementTheme.Light : ElementTheme.Dark;
+      
+        private double NavDREWideWidth { get; set; }
+
+        private void Page_Loaded(object sender, RoutedEventArgs e) => NavDREWideWidth = NavDRE.ActualWidth;
+       
+    }
 }

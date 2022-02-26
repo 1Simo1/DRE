@@ -18,15 +18,8 @@ namespace DRE.MarkupExtensions
 
         public DRETranslation()
         {
-            //if (SetupSvc == null) SetupSvc = new LibSetup();
-
             if (Lng == null) Lng = new LibLng();
-
         }
-
-
-        // public override string ToString() => 
-        //    Lng._(_, DRE.Libs.Setup.LibSetup.db.Query<String>("SELECT v FROM DRE WHERE n='defaultLanguage'").AsList().First());
 
         public object Convert(object value, Type targetType, object p, string language)
         {

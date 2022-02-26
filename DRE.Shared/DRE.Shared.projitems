@@ -18,10 +18,13 @@
     <Compile Include="$(MSBuildThisFileDirectory)App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Interfaces\INavSvc.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Interfaces\ISetupSvc.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MarkupExtensions\DRETranslation.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\Config.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\NavItem.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\ConfigSvc.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\NavSvc.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\SetupSvc.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\HomeViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\SetupDREViewModel.cs" />

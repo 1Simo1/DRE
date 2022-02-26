@@ -49,13 +49,13 @@ namespace DRE
 
         public App()
         {
+
             Host = UnoHost
                     .CreateDefaultBuilder(true)
 #if DEBUG
                     // Switch to Development environment when running in DEBUG
                     .UseEnvironment(Environments.Development)
 #endif
-
 
             // Add platform specific log providers
 #if !HAS_UNO || __WASM__
@@ -91,7 +91,8 @@ namespace DRE
                         services
 
                         .AddSingleton<ISetupSvc, SetupSvc>()
-                        .AddSingleton<ConfigSvc>();
+                        .AddSingleton<ConfigSvc>()
+                        .AddSingleton<INavSvc, NavSvc>();
 
 
                     })
@@ -123,28 +124,31 @@ namespace DRE
         /// <param name="args">Details about the launch request and process.</param>
         protected async override void OnLaunched(LaunchActivatedEventArgs args)
         {
-
-            //base.OnLaunched(args);
-
             var notif = Host.Services.GetService<IRouteNotifier>();
             notif.RouteChanged += RouteUpdated;
-
-           
 
             var c = Host.Services.GetService<ConfigSvc>();
 
             _window = Window.Current != null ? Window.Current : new Window();
 
             var f = new Frame();
+           
             f.AttachServiceProvider(Host.Services);
             _window.Title = c.config.Title;
+
+            f.Content = new Shell();
+
             _window.Content = f;
 
-            f.NavigationFailed += OnNavigationFailed;
+           // f.NavigationFailed += OnNavigationFailed;
 
-            f.Navigate(typeof(Shell));
+           // f.Navigate(typeof(Shell));
+
+           // 
 
             _window.Activate();
+
+            
 
             await Task.Run(() => Host.StartAsync());
 
@@ -236,7 +240,7 @@ namespace DRE
             }
         }
 
-
+       
 
 
 

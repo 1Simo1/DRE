@@ -6,8 +6,8 @@
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 			 mc:Ignorable="wasm"
              >
-
-	<Application.Resources>
+    
+    <Application.Resources>
 		<ResourceDictionary>
 			<ResourceDictionary.MergedDictionaries>
 				<!-- Load WinUI resources -->

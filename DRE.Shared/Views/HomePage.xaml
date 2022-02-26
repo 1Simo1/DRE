@@ -9,21 +9,32 @@
 	  xmlns:uen="using:Uno.Extensions.Navigation.UI"
 	  xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
 	  mc:Ignorable="d"
-	  Background="{ThemeResource MaterialBackgroundBrush}">
+      xmlns:t="using:DRE.MarkupExtensions"
+      xmlns:win="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:netstdref="http://uno.ui/netstdref"
+      Loaded="Page_Loaded"
+	  Background="{ThemeResource MaterialBackgroundBrush}" 
+      >
 
 
-
-    <muxc:Grid Margin="21">
+    <Page.Resources>
+        <t:DRETranslation x:Key="Translator" />
+    </Page.Resources>
+    
+    
+    <muxc:Border BorderThickness="1"  BorderBrush="Teal">
+    <muxc:Grid Margin="0">
         <muxc:Grid.RowDefinitions>
             <muxc:RowDefinition Height="Auto" />
             <muxc:RowDefinition />
             <muxc:RowDefinition Height="Auto" />
         </muxc:Grid.RowDefinitions>
-        <muxc:Grid Background="LightGray" Grid.Row="0">
+        <muxc:Grid Background="{ThemeResource AppBarBackgroundThemeBrush}" Grid.Row="0">
             <muxc:Grid.ColumnDefinitions>
                 <muxc:ColumnDefinition Width="Auto" />
                 <muxc:ColumnDefinition Width="Auto" />
-                <muxc:ColumnDefinition />
+                    <muxc:ColumnDefinition Width="Auto" />
+                    <muxc:ColumnDefinition />
             </muxc:Grid.ColumnDefinitions>
             <muxc:Image Grid.Column="0" Margin="21" Source="ms-appx:///Assets/Icons/DRE.ico"/>
             <muxc:TextBlock Grid.Column="1" 
@@ -34,45 +45,74 @@
                             >
                 DR EDITOR
             </muxc:TextBlock>
+                <AppBarSeparator Grid.Column="2" Margin="21,0"/>
 
+
+                <Grid Grid.Column="3">
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <muxc:StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,21">
+                        <TextBlock Text="{Binding Source='p_dre',Converter={StaticResource Translator}}" FontSize="21" Margin="0,0,21,0"/>
+                        <TextBlock Text=":" FontSize="21" Margin="0,0,21,0" />
+                        <TextBlock Text="{Binding ProjectName,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" FontSize="21"/>
+                    </muxc:StackPanel>
+                    <muxc:StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,21">
+                        <TextBlock Text="{Binding Source='c_dre',Converter={StaticResource Translator}}" FontSize="21" Margin="0,0,21,0"/>
+                        <TextBlock Text=":" FontSize="21" Margin="0,0,21,0" />
+                        <TextBlock Text="{Binding ProjectFolder,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" FontSize="21" />
+                    </muxc:StackPanel>
+                    <muxc:StackPanel Grid.Row="2" Orientation="Horizontal" Margin="0,21">
+                        <TextBlock Text="{Binding Source='dre_v',Converter={StaticResource Translator}}" FontSize="21" Margin="0,0,21,0"/>
+                        <TextBlock Text=":" FontSize="21" Margin="0,0,21,0" />
+                        <TextBlock Text="{Binding DRE_Version,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" FontSize="21"/>
+                    </muxc:StackPanel>
+                </Grid>
+
+            
+            
         </muxc:Grid>
-        <muxc:Grid Grid.Row="1" Background="Transparent">
+            <muxc:Grid Grid.Row="1" Background="{ThemeResource ListBoxBackgroundThemeBrush}">
             <muxc:Grid>
                 <muxc:Grid.ColumnDefinitions>
-                    <muxc:ColumnDefinition  Width="Auto" d:Width="321"/>
+                    <muxc:ColumnDefinition  Width="Auto"/>
                     <muxc:ColumnDefinition Width="*"/>
                 </muxc:Grid.ColumnDefinitions>
-                <muxc:Grid Background="AliceBlue" Grid.Column="0">
+                <muxc:Grid Background="Transparent" Grid.Column="0">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition />
                     </Grid.RowDefinitions>
                     <Grid Grid.Row="0">
-
-                        <StackPanel Orientation="Vertical" HorizontalAlignment="{Binding PaneOptionAlignment,UpdateSourceTrigger=PropertyChanged}" >
-
-                            <Button Margin="3" Command="{Binding PaneOptionCmd}">
-                                <FontIcon Glyph="&#xE8AB;" />
-                            </Button>
+                            <StackPanel Orientation="Vertical">
+                            <win:Button Margin="3" Click="Resize_Nav_Panel">
+                                    <FontIcon Glyph="&#xE8AB;"  Foreground="Black"/>
+                            </win:Button>
                             
-                            <Button x:Name="Toggle_Theme" 
+                            <win:Button x:Name="Toggle_Theme" 
                             Margin="3" 
-                         
-                                  
-                     
-                            
+
                             ToolTipService.ToolTip="Toggle Theme"
-                            Command="{Binding ToggleThemeCmd}"
+                            Click="ToggleTheme"
                             >
 
 
-                                <FontIcon Glyph="&#xEA61;" />
+                                    <FontIcon Glyph="&#xEA61;"  Foreground="Black"/>
 
-                            </Button>
+                            </win:Button>
                         </StackPanel>
                     </Grid>
 
-                    <ListView Grid.Row="1" ItemsSource="{Binding NavList,UpdateSourceTrigger=PropertyChanged}" Name="NavMenuList">
+                    <ListView Grid.Row="1" 
+                              ItemsSource="{Binding NavList,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"
+                              SelectedItem="{Binding SelectedNav,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"
+                              x:Name="NavDRE"
+                              BorderThickness="1"
+                              BorderBrush="AliceBlue"
+                             
+                              >
 
 
                         <ListView.ItemContainerStyle>
@@ -83,30 +123,29 @@
                         <ListView.ItemTemplate>
 
                             <DataTemplate>
-
-                                <Button HorizontalAlignment="Stretch"
-                                            HorizontalContentAlignment="Left"
-                                            Background="Transparent"
-                                            Command="{Binding Path=DataContext.NavCmd}"
-                                            uen:Navigation.Request="./Content/SetupLng"
-                                            CommandParameter="{Binding}"
-                                    >
-                                    <StackPanel Orientation="Horizontal">
-                                        <FontIcon Glyph="{Binding Icon,Mode=TwoWay}" />
-                                        <TextBlock Text="{Binding Name,Mode=TwoWay}" Margin="21,0,0,0"/>
-                                    </StackPanel>
-                                </Button>
+                                <StackPanel Orientation="Horizontal">
+                                    <FontIcon Glyph="{Binding Icon,Mode=TwoWay}" Foreground="Black" />
+                                    <TextBlock Text="{Binding Text,Mode=TwoWay}" Margin="21,0,0,0" Foreground="Black"/>
+                                </StackPanel>
 
                             </DataTemplate>
                         </ListView.ItemTemplate>
                     </ListView>
                 </muxc:Grid>
-                <ContentControl Grid.Column="1" Background="Teal" uen:Region.Attached="True" uen:Region.Name="Content"/>
+                <ContentControl Grid.Column="1"  
+                                uen:Region.Attached="True" 
+                                uen:Region.Name="Content"
+                                BorderThickness="1"
+                                BorderBrush="Teal"
+                                Background="{ThemeResource MaterialBackgroundBrush}"
+                                />
 
 
 
             </muxc:Grid>
         </muxc:Grid>
-        <muxc:StackPanel Grid.Row="2" Background="Teal" />
+        <muxc:StackPanel Grid.Row="2" Background="Teal" MinHeight="21"/>
     </muxc:Grid>
+    </muxc:Border>
+
 </Page>
