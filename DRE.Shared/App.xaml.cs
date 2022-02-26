@@ -182,7 +182,10 @@ namespace DRE
             views.Register(new ViewMap(ViewModel: typeof(ShellViewModel)),
                 new ViewMap<SetupLanguage,SetupLngViewModel>(),
                 new ViewMap<SetupDRE, SetupDREViewModel>(),
-                new ViewMap<HomePage, HomeViewModel>()
+                new ViewMap<HomePage, HomeViewModel>(),
+                new ViewMap<PageBPA,BpaViewModel>(),
+                new ViewMap<SaveGamePage, SaveGameViewModel>(),
+                new ViewMap<TrkPage,TrkViewModel>()
                 );
 
             routes.Register(
@@ -193,7 +196,9 @@ namespace DRE
                     new RouteMap("SetupLng", views.FindByView<SetupLanguage>()),
                     new RouteMap("Setup", views.FindByView<SetupDRE>()),
                     new RouteMap("Home",View: views.FindByView<HomePage>()),
-                   
+                    new RouteMap("BPA",View: views.FindByView<PageBPA>()),
+                    new RouteMap("SG",View: views.FindByView<SaveGamePage>()),
+                    new RouteMap("TRK",View: views.FindByView<TrkPage>()),
                  }));
 
 

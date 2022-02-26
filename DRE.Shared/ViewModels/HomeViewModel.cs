@@ -25,7 +25,7 @@ namespace DRE.ViewModels
                    
                     if (value!=null && !value.NavPath.Equals(_sn?.NavPath)) {
 
-                        Navigator.NavigateRouteAsync(this, $"/./Content/{value.NavPath}");
+                        Navigator.NavigateRouteAsync(this, $"-/./Content/{value.NavPath}");
                     }
 
                 SetProperty(ref _sn, value);
