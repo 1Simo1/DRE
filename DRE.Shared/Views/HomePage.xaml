@@ -52,12 +52,15 @@
                         <StackPanel Orientation="Vertical" HorizontalAlignment="{Binding PaneOptionAlignment,UpdateSourceTrigger=PropertyChanged}" >
 
                             <Button Margin="3" Command="{Binding PaneOptionCmd}">
-                                <SymbolIcon d:Symbol="ClosePane" Symbol="{Binding PaneOptionSymbol}" />
+                                <FontIcon Glyph="&#xE8AB;" />
                             </Button>
+                            
                             <Button x:Name="Toggle_Theme" 
                             Margin="3" 
+                         
+                                  
+                     
                             
-                           
                             ToolTipService.ToolTip="Toggle Theme"
                             Command="{Binding ToggleThemeCmd}"
                             >
@@ -85,11 +88,10 @@
                                             HorizontalContentAlignment="Left"
                                             Background="Transparent"
                                             Command="{Binding Path=DataContext.NavCmd}"
-                                      
+                                            uen:Navigation.Request="./Content/SetupLng"
                                             CommandParameter="{Binding}"
                                     >
                                     <StackPanel Orientation="Horizontal">
-                                        <Grid Background="Transparent" Width="{Binding MenuId,Converter={StaticResource NavItemMarginConverter}}"/>
                                         <FontIcon Glyph="{Binding Icon,Mode=TwoWay}" />
                                         <TextBlock Text="{Binding Name,Mode=TwoWay}" Margin="21,0,0,0"/>
                                     </StackPanel>
@@ -99,6 +101,8 @@
                         </ListView.ItemTemplate>
                     </ListView>
                 </muxc:Grid>
+                <ContentControl Grid.Column="1" Background="Teal" uen:Region.Attached="True" uen:Region.Name="Content"/>
+
 
 
             </muxc:Grid>

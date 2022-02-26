@@ -300,12 +300,12 @@ namespace DRE.Libs.Setup
 
                     db = new SQLiteConnection(cs);
 
-                    x.Report(new SetupProgress() { msg = T._("setup_ok"), p = 100 });
+                    x.Report(new SetupProgress() { msg = T._(""), p = 100 });
 
                 } // DEFAULT DB & OK
 
 
-                if (i == tot_tabs) x.Report(new SetupProgress() { msg = T._("setup_ok"), p = 100 });
+                if (i == tot_tabs) x.Report(new SetupProgress() { msg = T._(""), p = 100 });
 
             }
             catch (Exception e) { }

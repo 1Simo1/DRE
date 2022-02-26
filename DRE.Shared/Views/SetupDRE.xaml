@@ -14,8 +14,8 @@
     xmlns:win="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:netstdref="http://uno.ui/netstdref"
     
-    MinWidth="{Binding Width,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"
-    MinHeight="{Binding Height,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"
+    win:Width="{Binding Width,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"
+    win:Height="{Binding Height,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"
     Background="{ThemeResource MaterialBackgroundBrush}">
 
     <Page.Resources>
@@ -68,7 +68,7 @@
 
                 <Grid Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" 
                       Background="Teal" Margin="0,21">
-                <win:TextBlock
+                <TextBlock
                     Foreground="White"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
@@ -78,15 +78,6 @@
                
                     />
 
-                <netstdref:Button BorderThickness="0" 
-                                      HorizontalAlignment="Center" 
-                                      VerticalAlignment="Center"
-                                      Foreground="White"
-                                      Background="Transparent"
-                                      FontSize="21"
-                                      >
-                        <t:DRETranslation _='setup_dr' Margin="0,21"/>
-                    </netstdref:Button>
                 </Grid>
 
                 <TextBlock
@@ -98,17 +89,6 @@
                     Grid.Row="1" Grid.Column="0"
                     />
 
-            <netstdref:Button BorderThickness="0" 
-                                      HorizontalAlignment="Center" 
-                                      VerticalAlignment="Center"
-                                      Background="Transparent"
-                                  Grid.Row="1" Grid.Column="0"
-                                  FontSize="21"
-                                  
-                                      >
-                    <t:DRETranslation _='n_prog' Margin="0,21"/>
-                </netstdref:Button>
-
                 <TextBox Grid.Row="1" Grid.Column="1" 
                                 VerticalAlignment="Center"
                                 HorizontalAlignment="Stretch"
@@ -117,7 +97,7 @@
                                 Margin="21,0"
                                 />
 
-            <win:Button Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"
+            <Button Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"
                              Command="{Binding ConfProjectNameCmd}"
                              HorizontalAlignment="Stretch"
                              VerticalAlignment="Center"
@@ -127,23 +107,6 @@
                              Content="{Binding Source='conf',Converter={StaticResource Translator}}"
                            />
 
-
-
-
-
-
-            <netstdref:Button Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"
-                             Command="{Binding ConfProjectNameCmd}"
-                             HorizontalAlignment="Stretch"
-                             VerticalAlignment="Center"
-                             Margin="0"
-                             Background="LightGreen"
-                             FontWeight="SemiBold"
-                            >
-                    <t:DRETranslation _='conf' />
-                </netstdref:Button>
-
-             
                     <StackPanel Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Vertical">
                         <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
                                    Margin="0" FontSize="21" 
@@ -157,7 +120,7 @@
                                  />
             </StackPanel>
 
-                <win:TextBlock
+                <TextBlock
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
                     Margin="21"
@@ -165,18 +128,6 @@
                     Text="{Binding Source='s_drf',Converter={StaticResource Translator}}"
                     Grid.Row="4" Grid.Column="0"
                     />
-
-
-                <netstdref:Button BorderThickness="0" 
-                                      HorizontalAlignment="Center" 
-                                      VerticalAlignment="Center"
-                                      Background="Transparent"
-                                  Grid.Row="4" Grid.Column="0"
-                                  FontSize="21"
-                                      >
-                    <t:DRETranslation _='s_drf' Margin='21'/>
-                </netstdref:Button>
-
 
                 <ListView Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2"
                          BorderBrush="AliceBlue" BorderThickness="1"
@@ -187,7 +138,7 @@
                           
                          />
 
-            <win:Button Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2"
+            <Button Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2"
                              Command="{Binding SetupCmd}"
                              HorizontalAlignment="Stretch"
                              VerticalAlignment="Center"
@@ -196,23 +147,6 @@
                              FontWeight="SemiBold"
                              Content="{Binding Source='setup_dr',Converter={StaticResource Translator}}"
                            />
-
-
-
-
-
-
-
-            <netstdref:Button Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2"
-                             Command="{Binding SetupCmd}"
-                             HorizontalAlignment="Stretch"
-                             VerticalAlignment="Center"
-                             Margin="0"
-                             Background="AliceBlue"
-                             FontWeight="SemiBold"
-                            >
-                    <t:DRETranslation _='setup_dr' />
-                </netstdref:Button>
 
                 <StackPanel Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Vertical">
                     <TextBlock Text="{Binding SetupMsg,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"
@@ -232,7 +166,7 @@
 
                 </StackPanel>
 
-            <win:Button Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="2"
+            <Button Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="2"
                             
                              uen:Navigation.Request="Home"
                              HorizontalAlignment="Stretch"
@@ -244,28 +178,6 @@
                             Visibility="{Binding SetupCompletedVisibility,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"
                             Content="{Binding Source='setup_ok',Converter={StaticResource Translator}}"
                            />
-
-
-
-
-
-
-
-            <netstdref:Button Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="2"
-                             Command="{Binding StartCmd}"
-                             HorizontalAlignment="Stretch"
-                             VerticalAlignment="Center"
-                             Margin="0"
-                             Background="Teal"
-                             Foreground="White"
-                             FontWeight="SemiBold"
-                             Visibility="{Binding SetupCompletedVisibility,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"
-                            >
-                    <t:DRETranslation _='setup_ok' />
-                </netstdref:Button>
-
-     
-
 
         </Grid>
       

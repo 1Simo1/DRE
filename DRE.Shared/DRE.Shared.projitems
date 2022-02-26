@@ -72,10 +72,14 @@
     <Content Include="$(MSBuildThisFileDirectory)appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\DRE.ico" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\DRE.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Resource Include="$(MSBuildThisFileDirectory)Assets\Icons\DRE.ico" />
     <Resource Include="$(MSBuildThisFileDirectory)Assets\Icons\DRE.ico" />
-    <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\dre.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\dre.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <None Include="$(MSBuildThisFileDirectory)Assets\SharedAssets.md" />
   </ItemGroup>
   <ItemGroup>

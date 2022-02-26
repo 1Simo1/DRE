@@ -166,7 +166,6 @@ namespace DRE.ViewModels
                                                    pf = value.p;
                                                    msgf = Int32.Parse($"{value.p}") + "%";
                                                    if (value.msg != null) FolderList.Add(value.msg);
-                                                   if (value.p == 100) SetupCompletedVisibility = "Visible";
                                                });
 
             Task.Run(() => searchValidGameFolders(x));
@@ -234,6 +233,7 @@ namespace DRE.ViewModels
                 p = value.p;
                 msg = Int32.Parse($"{value.p}") + "%";
                 if (value.msg != null) SetupMsg = value.msg;
+                if (value.p == 100) SetupCompletedVisibility = "Visible";
             });
 
             Task.Run(() => _setupSvc.SetupNewProject(prj_dre.Trim(), SelectedGameFolder, x));

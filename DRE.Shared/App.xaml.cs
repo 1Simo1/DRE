@@ -49,9 +49,6 @@ namespace DRE
 
         public App()
         {
-
-
-
             Host = UnoHost
                     .CreateDefaultBuilder(true)
 #if DEBUG
@@ -69,7 +66,6 @@ namespace DRE
 				options.ColorBehavior = Microsoft.Extensions.Logging.Console.LoggerColorBehavior.Disabled;
 			}))
 #endif
-
                     // Configure log levels for different categories of logging
                     .ConfigureLogging(logBuilder =>
                     {
@@ -79,16 +75,12 @@ namespace DRE
                                 .XamlLayoutLogLevel(LogLevel.Information);
                     })
 
-
-
                     // Load configuration information from appsettings.json
                     .UseAppSettings()
 
                     .UseEmbeddedAppSettings<App>(includeEnvironmentSettings: true)
 
                     .UseConfiguration<Config>()
-
-
 
                     // Register Json serializers (ISerializer and IStreamSerializer)
                     .UseSerialization()
@@ -124,9 +116,6 @@ namespace DRE
 #endif
         }
 
-    
-
-
         /// <summary>
         /// Invoked when the application is launched normally by the end user.  Other entry points
         /// will be used such as when the application is launched to open a specific file.
@@ -146,23 +135,6 @@ namespace DRE
 
             _window = Window.Current != null ? Window.Current : new Window();
 
-#if HAS_UNO_SKIA
-            
-            
-            var setupSvc = Host.Services.GetService<ISetupSvc>();
-
-            _window.Title = c.config.Title;
-
-
-
-           
-
-            _window.Content = setupSvc.Setup ? new HomePage().WithNavigation(Host.Services) :
-                                               new SetupLanguage().WithNavigation(Host.Services);
-
-
-
-#else
             var f = new Frame();
             f.AttachServiceProvider(Host.Services);
             _window.Title = c.config.Title;
@@ -171,21 +143,12 @@ namespace DRE
             f.NavigationFailed += OnNavigationFailed;
 
             f.Navigate(typeof(Shell));
-#endif
-
-            
 
             _window.Activate();
 
             await Task.Run(() => Host.StartAsync());
 
-
-
-
         }
-
-       
-
 
         /// <summary>
         /// Invoked when Navigation to a certain page fails
@@ -210,22 +173,6 @@ namespace DRE
             // TODO: Save application state and stop any background activity
             deferral.Complete();
         }
-
-#if HAS_UNO_SKIA
-
-        private static void RegisterRoutes(IRouteBuilder builder)
-        {
-            builder
-                //.Register(RouteMap.For(nameof(ShellView)))
-                //.Register(ViewMap.For(nameof(ShellView)).Show<ShellView>().With<ShellViewModel>())
-                .Register(ViewMap.For("Home").Show<HomePage>().With<HomeViewModel>())
-                .Register(ViewMap.For("SetupLng").Show<SetupLanguage>().With<SetupLngViewModel>())
-                .Register(ViewMap.For("Setup").Show<SetupDRE>().With<SetupDREViewModel>());
-
-
-        }
-#else
-
         private void RegisterRoutes(IViewRegistry views, IRouteRegistry routes)
         {
             views.Register(new ViewMap(ViewModel: typeof(ShellViewModel)),
@@ -248,9 +195,6 @@ namespace DRE
 
         }
 
-
-#endif
-#if !HAS_UNO_SKIA
         public async void RouteUpdated(object sender, RouteChangedEventArgs e)
         {
             try
@@ -291,15 +235,9 @@ namespace DRE
                 Console.WriteLine("Error: " + ex.Message);
             }
         }
-#endif
 
-#if HAS_UNO_SKIA
-        private void RouteUpdated(object sender, EventArgs e)
-        {
-            
-        }
 
-#endif
+
 
 
     }
