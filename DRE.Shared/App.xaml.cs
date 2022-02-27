@@ -92,7 +92,8 @@ namespace DRE
 
                         .AddSingleton<ISetupSvc, SetupSvc>()
                         .AddSingleton<ConfigSvc>()
-                        .AddSingleton<INavSvc, NavSvc>();
+                        .AddSingleton<INavSvc, NavSvc>()
+                        .AddSingleton<ISvcDRE, SvcDRE>();
 
 
                     })

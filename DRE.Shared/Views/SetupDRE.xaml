@@ -112,13 +112,13 @@
                                    Margin="0" FontSize="21" 
                                    Text="{Binding msgf,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"/>
 
-                <ProgressBar 
+                        <ProgressBar 
                                  Minimum="0"
                                  Maximum="100"
                                  Width="1000"
                                  Value="{Binding pf,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"
                                  />
-            </StackPanel>
+                    </StackPanel>
 
                 <TextBlock
                     HorizontalAlignment="Center"
