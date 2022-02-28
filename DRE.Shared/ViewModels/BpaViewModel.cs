@@ -66,7 +66,23 @@ namespace DRE.ViewModels
         public BpaFileEntry bpaFile
         {
             get { return _bpaf; }
-            set { SetProperty(ref _bpaf, value); }
+            set {
+
+                if (value != null && _bpaf != value)
+                {
+                    OpList = new ObservableCollection<String>(_svc.computeBpaFileEntryAvailaibleOperations(value));
+                }
+
+                SetProperty(ref _bpaf, value); 
+            
+            }
+        }
+
+        private ObservableCollection<String> _bpaFileAvailableOperationList;
+        public ObservableCollection<String> OpList
+        {
+            get { return _bpaFileAvailableOperationList; }
+            set { SetProperty(ref _bpaFileAvailableOperationList, value); }
         }
 
 

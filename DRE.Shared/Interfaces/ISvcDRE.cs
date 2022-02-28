@@ -12,5 +12,6 @@ namespace DRE.Interfaces
         IDbConnection db { get => LibSetup.db; }
         List<BpaFile> ListBpa();
         List<BpaFileEntry> BpaFileList(int id);
+        List<String> computeBpaFileEntryAvailaibleOperations(BpaFileEntry value);
     }
 }

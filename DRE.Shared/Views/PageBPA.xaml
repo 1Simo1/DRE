@@ -29,7 +29,7 @@
                        />
         </muxc:Border>
         
-        <Grid Grid.Row="1" Margin="21">
+        <Grid Grid.Row="1" Margin="21,11">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
@@ -49,7 +49,8 @@
                         >
                     <TextBlock Text="{Binding Source='ext_imgs',Converter={StaticResource Translator}}" />
                 </Button>
-                <StackPanel Grid.Column="2" Grid.ColumnSpan="2" Orientation="Vertical" VerticalAlignment="Center" Margin="21,0">
+               
+                <StackPanel Grid.Column="2" Grid.ColumnSpan="2" Orientation="Vertical" VerticalAlignment="Center" Margin="21,6">
                     <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
                                    Margin="0" FontSize="21" 
                                    Text="{Binding msg,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"/>
@@ -62,13 +63,16 @@
                                  />
                 </StackPanel>
 
-            </Grid>
+           </Grid>
 
-            <ListBox VerticalAlignment="Center" 
+            <muxc:StackPanel Orientation="Horizontal" Grid.Row="1">
+                <ListBox VerticalAlignment="Center" 
                      ItemsSource="{Binding bpaList,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"
                      SelectedItem="{Binding SelectedBPA,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"
-                     Grid.Row="1" 
-                     Margin="21,0"
+         
+                     Margin="21,3"
+                     BorderThickness="1"
+                     BorderBrush="{ThemeResource ContentDialogBorderThemeBrush}"
                      >
                 <ListBox.ItemsPanel>
                     <ItemsPanelTemplate>
@@ -80,89 +84,91 @@
                         <TextBlock Text="{Binding Name}" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="21,0" />
                     </DataTemplate>
                 </ListBox.ItemTemplate>
-            </ListBox>
+                </ListBox>
+
+                <Button Background="{ThemeResource ButtonBackgroundThemeBrush}" VerticalAlignment="Center" Margin="21,0"
+                        Command="{Binding WriteBPACmd}"
+                        BorderThickness="1"
+                        BorderBrush="{ThemeResource ButtonBorderThemeBrush}"
+                        >
+                    <TextBlock Text="{Binding Source='drbpa',Converter={StaticResource Translator}}" />
+                </Button>
+
+            </muxc:StackPanel>
 
             <Grid Margin="21" Grid.Row="2">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition />
                 </Grid.ColumnDefinitions>
-                <ListView ItemsSource="{Binding bpaEntryList,UpdateSourceTrigger=PropertyChanged}"
-                                               SelectedItem="{Binding bpaFile,UpdateSourceTrigger=PropertyChanged}"
-                                               Grid.Column="0"
-                                               Margin="21,0"
-                                               />
+                <Grid Grid.Column="0" Margin="21,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <muxc:Border Background="Teal" Grid.Row="0">
+                        <TextBlock Text="{Binding Source='sf',Converter={StaticResource Translator}}" 
+                       FontSize="16"
+                       Margin="3"
+                       HorizontalAlignment="Center"
+                       Foreground="White"
+                       />
+                    </muxc:Border>
+                    <muxc:ScrollViewer  Grid.Row="1" >
+                        <ListView ItemsSource="{Binding bpaEntryList,UpdateSourceTrigger=PropertyChanged}"
+                                                SelectedItem="{Binding bpaFile,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"  
+                                                Margin="21,0"
+                                                />
+                    </muxc:ScrollViewer>
+                </Grid>
+           
+            
                 <Grid Grid.Column="1" 
-                      Background="{ThemeResource ContentDialogBackgroundThemeBrush}"
                       BorderThickness="1"
                       BorderBrush="{ThemeResource ContentDialogBorderThemeBrush}"
-                      
-                      />
-                
-                
-                
-                	<!--<DataGrid Grid.Row="1" Items="{Binding files}"
-                                    AutoGenerateColumns="False" IsReadOnly="True"
-                                    AlternatingRowBackground="AliceBlue"
-                                    BorderBrush="Black"
-                                    BorderThickness="1"
-                                    CanUserReorderColumns="False"
-        >
-		
+                      Padding="21"
+                      >
 
-			<DataGrid.Columns>
-				<DataGridTextColumn Header="#" Binding="{Binding n}" Width="*" MaxWidth="63"/>
-				<DataGridTextColumn Binding="{Binding nf}" Width="*">
-					<DataGridTextColumn.Header>
-						<TextBlock Text="{Binding file_n}" />
-					</DataGridTextColumn.Header>
-				</DataGridTextColumn>
-				<DataGridTextColumn Binding="{Binding dim}" Width="*">
-					<DataGridTextColumn.Header>
-						<TextBlock Text="{Binding dim}" />
-					</DataGridTextColumn.Header>
-				</DataGridTextColumn>
-				<DataGridTemplateColumn Width="*">
-					<DataGridTemplateColumn.Header>
-						<TextBlock Text="{Binding gst}" />
-					</DataGridTemplateColumn.Header>
-					<DataGridTemplateColumn.CellTemplate>
-						<DataTemplate>
-							<StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" Margin="21,0">
-								<Button
-									Command="{Binding DataContext.ExtBpkCmd,ElementName=BPA}"
-									CommandParameter="{Binding}"
-									Classes="bpk"
-                             >
-									<TextBlock Text="{Binding DataContext.ext_bpk,ElementName=BPA}" />
-								</Button>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition />
+                 
+                    </Grid.RowDefinitions>
 
-								<Button
-									Command="{Binding DataContext.ExtImgCmd,ElementName=BPA}"
-									CommandParameter="{Binding}"
-									Classes="img"
-                       >
-									<TextBlock Text="{Binding DataContext.ext_img,ElementName=BPA}" />
-								</Button>
+                   <TextBlock Text="{Binding Source='file_n',Converter={StaticResource Translator}}" Grid.Row="0" Grid.Column="0" Margin="21"/>
+                   <TextBlock Text="{Binding bpaFile.FileName,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" Grid.Row="0" Grid.Column="1" Margin="21"/>
 
-								<Button
-									Command="{Binding DataContext.ExtFileCmd,ElementName=BPA}"
-									CommandParameter="{Binding}"
-									Classes="file"
-                       >
-									<TextBlock Text="{Binding DataContext.ext_file,ElementName=BPA}" />
-								</Button>
+                    <TextBlock Text="{Binding Source='dim',Converter={StaticResource Translator}}" Grid.Row="1" Grid.Column="0" Margin="21"/>
+                    <TextBlock Text="{Binding bpaFile.Size,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" Grid.Row="1" Grid.Column="1" Margin="21"/>
+
+                    <TextBlock Text="{Binding Source='gst',Converter={StaticResource Translator}}" Grid.Row="2" Grid.Column="0" Margin="21"/>
 
 
+                    <Grid Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" BorderThickness="1"
+                      BorderBrush="{ThemeResource ContentDialogBorderThemeBrush}">
+                        <ItemsRepeater ItemsSource="{Binding OpList,Mode=TwoWay}">
+                            <ItemsRepeater.ItemTemplate>
+                                <DataTemplate>
+                                    <Button Command="{Binding bpaOpCmd}" CommandParameter="{Binding}" HorizontalAlignment="Stretch" Margin="11">
+                                        <TextBlock Text="{Binding Source={Binding},Converter={StaticResource Translator}}" />
+                                    </Button>
+                                </DataTemplate>
+                            </ItemsRepeater.ItemTemplate>
+                        </ItemsRepeater>
+                    </Grid>
 
+              
 
-							</StackPanel>
-						</DataTemplate>
-					</DataGridTemplateColumn.CellTemplate>
-
-				</DataGridTemplateColumn>
-			</DataGrid.Columns>
-		</DataGrid>-->
+                </Grid>
+                   
+            
         
 
             </Grid>

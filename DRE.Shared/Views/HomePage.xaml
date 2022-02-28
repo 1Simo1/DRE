@@ -29,15 +29,17 @@
             <muxc:RowDefinition />
             <muxc:RowDefinition Height="Auto" />
         </muxc:Grid.RowDefinitions>
-        <muxc:Grid Background="{ThemeResource AppBarBackgroundThemeBrush}" Grid.Row="0">
+            <muxc:Grid Background="{ThemeResource MaterialBackgroundBrush}" Grid.Row="0">
             <muxc:Grid.ColumnDefinitions>
                 <muxc:ColumnDefinition Width="Auto" />
                 <muxc:ColumnDefinition Width="Auto" />
                     <muxc:ColumnDefinition Width="Auto" />
                     <muxc:ColumnDefinition />
             </muxc:Grid.ColumnDefinitions>
-            <muxc:Image Grid.Column="0" Margin="21" Source="ms-appx:///Assets/Icons/DRE.ico"/>
-            <muxc:TextBlock Grid.Column="1" 
+                <muxc:Border BorderThickness="1" Background="{ThemeResource MaterialBackgroundBrush}" Grid.Column="0">
+                    <muxc:Image Source="ms-appx:///Assets/Icons/DRE.png" Width="128" Height="128"/>
+                </muxc:Border>
+                <muxc:TextBlock Grid.Column="1" 
                             VerticalAlignment="Center" 
                             HorizontalAlignment="Center"
                             FontSize="63"
