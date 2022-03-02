@@ -3,6 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:DRE.Views"
+    xmlns:VM="using:DRE.ViewModels"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:t="using:DRE.MarkupExtensions"
@@ -151,19 +152,28 @@
                     <TextBlock Text="{Binding Source='gst',Converter={StaticResource Translator}}" Grid.Row="2" Grid.Column="0" Margin="21"/>
 
 
-                    <Grid Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" BorderThickness="1"
-                      BorderBrush="{ThemeResource ContentDialogBorderThemeBrush}">
-                        <ItemsRepeater ItemsSource="{Binding OpList,Mode=TwoWay}">
-                            <ItemsRepeater.ItemTemplate>
-                                <DataTemplate>
-                                    <Button Command="{Binding bpaOpCmd}" CommandParameter="{Binding}" HorizontalAlignment="Stretch" Margin="11">
-                                        <TextBlock Text="{Binding Source={Binding},Converter={StaticResource Translator}}" />
-                                    </Button>
-                                </DataTemplate>
-                            </ItemsRepeater.ItemTemplate>
-                        </ItemsRepeater>
-                    </Grid>
-
+                    <muxc:ListView Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" BorderThickness="1"
+                      BorderBrush="{ThemeResource ContentDialogBorderThemeBrush}"
+                                  ItemsSource="{Binding OpList,Mode=TwoWay}"
+                                  HorizontalContentAlignment="Stretch"
+                                  x:Name="cmdList"
+                                  >
+                        <muxc:ListView.ItemTemplate>
+                            <DataTemplate>
+                            <Button 
+                                            Command="{Binding DataContext.bpaOpCmd,ElementName=cmdList}" 
+                                            CommandParameter="{Binding}" HorizontalAlignment="Stretch" Margin="11"
+                                            BorderThickness="0"
+                                Background="Transparent"
+                                            >
+                                <TextBlock Text="{Binding Source={Binding},Converter={StaticResource Translator}}" />
+                            </Button>
+                            </DataTemplate>
+                        </muxc:ListView.ItemTemplate>
+                    </muxc:ListView>
+                    
+                    
+               
               
 
                 </Grid>

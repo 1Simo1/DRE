@@ -1,10 +1,12 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using DRE.Interfaces;
 using DRE.Libs.Bpa.Models;
+using DRE.Libs.Setup.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace DRE.ViewModels
 {
@@ -32,6 +34,8 @@ namespace DRE.ViewModels
             get { return _p; }
             set { SetProperty(ref _p, value); }
         }
+
+        public IRelayCommand WriteBPACmd { get; }
 
         private ObservableCollection<BpaFile> _bpaList;
         public ObservableCollection<BpaFile> bpaList
@@ -85,20 +89,76 @@ namespace DRE.ViewModels
             set { SetProperty(ref _bpaFileAvailableOperationList, value); }
         }
 
+        public IRelayCommand<String> bpaOpCmd { get; }
+
+
+        private IProgress<SetupProgress> x { get; set; }
 
         private readonly ISvcDRE _svc;
         public BpaViewModel(ISvcDRE svc)
         {
             _svc = svc;
+
             ExtImgsCmd = new RelayCommand(ExtractImagesFromBPAs);
+
 
             bpaList = new ObservableCollection<BpaFile>(svc.ListBpa());
 
+            WriteBPACmd = new RelayCommand(WriteBPA);
+
+            bpaOpCmd = new RelayCommand<String>(bpaFileEntryOperation);
+
+           
         }
 
-        private void ExtractImagesFromBPAs()
+      
+
+        private async void ExtractImagesFromBPAs()
         {
-            //throw new NotImplementedException();
+            try
+            {
+
+            }
+            catch (Exception) { return; }
+
         }
+
+        private async void WriteBPA()
+        {
+            try
+            {
+                x = new Progress<SetupProgress>(value =>
+                {
+                    p = value.p;
+                    msg = Int32.Parse($"{value.p}") + "%";
+
+                });
+
+                await Task.Run(() => _svc.WriteBPA(SelectedBPA,x));
+            }
+            catch (Exception) { return; }
+
+        }
+
+
+        private async void bpaFileEntryOperation(String opCode)
+        {
+            try
+            {
+                x = new Progress<SetupProgress>(value =>
+                {
+                    p = value.p;
+                    msg = Int32.Parse($"{value.p}") + "%";
+
+                });
+
+                await Task.Run(() => _svc.bpaFileEntryOperation(bpaFile, opCode,x));
+            }
+            catch (Exception) { return; }
+
+           
+        }
+
+
     }
 }

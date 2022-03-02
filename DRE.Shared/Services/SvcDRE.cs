@@ -2,10 +2,12 @@
 using DRE.Interfaces;
 using DRE.Libs.Bpa.Models;
 using DRE.Libs.Setup;
+using DRE.Libs.Setup.Models;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace DRE.Services
 {
@@ -13,31 +15,29 @@ namespace DRE.Services
     {
         public IDbConnection db { get => LibSetup.db; }
 
+        private SvcBPA _bpaSvc { get; set; }
+
         public SvcDRE()
         {
-
+            _bpaSvc = new SvcBPA(db);
         }
 
-        public List<BpaFile> ListBpa() => db.Query<BpaFile>("SELECT id,nf AS Name, dim AS Size FROM bpa ORDER BY id ASC").ToList();
+        public List<BpaFile> ListBpa() => _bpaSvc.ListBpa();
 
-        public List<BpaFileEntry> BpaFileList(int id)
+        public List<BpaFileEntry> BpaFileList(int id) => _bpaSvc.BpaFileList(id);
+
+
+        public List<String> computeBpaFileEntryAvailaibleOperations(BpaFileEntry value) => _bpaSvc.computeBpaFileEntryAvailaibleOperations(value);
+        
+
+        public async void bpaFileEntryOperation(BpaFileEntry bpaFile, String opCode, IProgress<SetupProgress> x)
         {
-            return db.Query<BpaFileEntry>("SELECT id, nf AS FileName, bpa AS bpaID, n, dim AS Size, pal,exp, d as Data " +
-                                          "FROM bpa_files WHERE bpa=@bpa_id ORDER BY n ASC", new { bpa_id = id }).ToList();
+            await Task.Run(() => _bpaSvc.bpaFileEntryOperation(bpaFile, opCode, x));
         }
 
-        public List<String> computeBpaFileEntryAvailaibleOperations(BpaFileEntry value)
+        public async void WriteBPA(BpaFile selectedBPA, IProgress<SetupProgress> x)
         {
-            List<String> opList = new List<String>();
-
-#if DEBUG
-            opList.Add("ext_bpk");
-            opList.Add("ext_img");
-            opList.Add("ext_file");
-            opList.Add("agg");
-#endif
-
-            return opList;
+            await Task.Run(() => _bpaSvc.WriteBPA(selectedBPA,x));
         }
     }
 }

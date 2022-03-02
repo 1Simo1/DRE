@@ -1,5 +1,6 @@
 ﻿using DRE.Libs.Bpa.Models;
 using DRE.Libs.Setup;
+using DRE.Libs.Setup.Models;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -13,5 +14,7 @@ namespace DRE.Interfaces
         List<BpaFile> ListBpa();
         List<BpaFileEntry> BpaFileList(int id);
         List<String> computeBpaFileEntryAvailaibleOperations(BpaFileEntry value);
+        void bpaFileEntryOperation(BpaFileEntry bpaFile, String opCode, IProgress<SetupProgress> x);
+        void WriteBPA(BpaFile selectedBPA, IProgress<SetupProgress> x);
     }
 }
