@@ -1,9 +1,11 @@
 ﻿using Dapper;
 using DRE.Libs.Bpa.Models;
 using DRE.Libs.Setup.Models;
+using ImageMagick;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -426,7 +428,171 @@ namespace DRE.Services
         /// <param name="imageFormat">Optional specific output image format, if null all supported image formats are written</param>
         private void bpkImg(BpaFileEntry bpaFile, String imageFormat=null)
         {
-            throw new NotImplementedException();
+            if (bpaFile.exp == 0)
+            {
+                bpkExp(bpaFile);
+                bpaFile = db.Query<BpaFileEntry>(
+                          "SELECT id,nf AS FileName, bpa AS bpaID, n, dim AS Size, pal, exp, d AS Data " +
+                          "FROM bpa_files WHERE id=@id", new {id = bpaFile.id}).Single();
+            }
+
+            x.Report(new() { p = 51 });
+
+            ExpFileEntry exp = db.Query<ExpFileEntry>(
+                               "SELECT id, d AS Data, w AS width, h AS height, rix FROM exp WHERE id=@id", new { id = bpaFile.exp }).Single();
+
+            PalFileEntry pal = bpaFile.pal == 0 ? 
+                               assignPAL(bpaFile) : 
+                               db.Query<PalFileEntry>("SELECT id, d AS Data FROM pal WHERE id=@id", new { id = bpaFile.pal }).Single();
+
+
+            String bpaName = db.Query<String>("SELECT nf FROM bpa WHERE id=@id", new { id = bpaFile.bpaID}).First();
+
+            testDir($"{dir}");
+            testDir($"{dir}/BPA");
+            testDir($"{dir}/BPA/{bpaName}");
+
+            String baseFileName = $"{dir}/BPA/{bpaName}/{bpaFile.FileName}";
+
+            if (String.IsNullOrEmpty(imageFormat))
+            {
+                imgRIX(exp, pal, baseFileName);
+                x.Report(new() { p = 55 });
+                imgGIF(exp, pal, baseFileName);
+                x.Report(new() { p = 75 });
+                imgBMP(exp, pal, baseFileName);
+                x.Report(new() { p = 95 });
+            } else
+            {
+                switch (imageFormat)
+                {
+                    case "RIX": imgRIX(exp, pal, baseFileName); break;
+                    case "GIF": imgGIF(exp, pal, baseFileName); break;
+                    case "BMP": imgBMP(exp, pal, baseFileName); break;
+                    default: return;
+                }
+            }
+            x.Report(new() { p = 95 });
+        }
+
+        private void imgRIX(ExpFileEntry exp, PalFileEntry pal, String baseFileName)
+        {
+            if (exp.rix)
+            {
+                File.WriteAllBytes($"{baseFileName}.RIX", exp.Data);
+                return;
+            }
+
+            List<Byte> rix = new List<Byte>();
+
+            rix.AddRange(new byte[] { 82, 73, 88, 51 }); //RIX3 
+
+            rix.Add((byte)(exp.width % 256)); //w LSB
+            rix.Add((byte)(exp.width / 256)); //w MSB
+
+            rix.Add((byte)(exp.height % 256)); //h LSB
+            rix.Add((byte)(exp.height / 256)); //h MSB
+
+            rix.AddRange(new byte[] { 175, 0 }); //VGA & 0
+
+            rix.AddRange(pal.Data);
+
+            rix.AddRange(exp.Data);
+
+            File.WriteAllBytes($"{baseFileName}.RIX", rix.ToArray());
+        }
+
+        private void imgGIF(ExpFileEntry exp, PalFileEntry pal, String baseFileName)
+        {
+
+            using (var image = new Bitmap(exp.width, exp.height))
+            {
+                int np = 0;
+                for (int w = 0; w < exp.height; w++)
+                {
+                    for (int h = 0; h < exp.width; h++)
+                    {
+                        image.SetPixel(h, w, Color.FromArgb(
+                            pal.Data[(exp.Data[np])*3]*4,
+                            pal.Data[(exp.Data[np]) * 3+1] * 4,
+                            pal.Data[(exp.Data[np]) * 3+2] * 4
+                            ));
+
+                        np++;
+                    }
+                }
+
+                image.Save($"{baseFileName}.GIF", System.Drawing.Imaging.ImageFormat.Gif);
+            }
+        }
+
+
+      
+
+        private void imgBMP(ExpFileEntry exp, PalFileEntry pal, String baseFileName)
+        {
+            using (var image = new Bitmap(exp.width, exp.height))
+            {
+                int np = 0;
+                for (int w = 0; w < exp.height; w++)
+                {
+                    for (int h = 0; h < exp.width; h++)
+                    {
+                        image.SetPixel(h, w, Color.FromArgb(
+                           (pal.Data[(exp.Data[np] * 3)] * 4),
+                            (pal.Data[(exp.Data[np] * 3) + 1] * 4),
+                            (pal.Data[(exp.Data[np] * 3) + 2] * 4)
+
+                            ));
+
+                        np++;
+                    }
+                }
+
+                image.Save($"{baseFileName}.BMP", System.Drawing.Imaging.ImageFormat.Bmp);
+            }
+        }
+
+
+        /// <summary>
+        /// Method for associate right palette to image from BPK
+        /// </summary>
+        /// <param name="bpaFile">BPK file into BPA</param>
+        /// <returns>Palette id and data</returns>
+        private PalFileEntry assignPAL(BpaFileEntry bpaFile)
+        {
+            if (bpaFile.pal != 0) return db.Query<PalFileEntry>("SELECT id, d AS Data FROM pal WHERE id=@id", new { id = bpaFile.pal }).Single();
+          
+            List<BpaFileEntry> filesBPA = BpaFileList(bpaFile.bpaID);
+
+          
+            /* Search for PAL file with BPK file of same name */
+            var testPAL = filesBPA.Where
+                (x => x.FileName.Equals($"{bpaFile.FileName.Substring(0, bpaFile.FileName.Length - 3)}.PAL")).ToList();
+
+            if (testPAL.Any())
+            {
+                db.Query("REPLACE INTO pal VALUES (@id,@d)", new { id = testPAL.First().id, d = testPAL.First().Data });
+                db.Query("UPDATE bpa_files SET pal=@p WHERE id=@id", new { p = testPAL.First().id, id = bpaFile.id });
+
+                return new PalFileEntry()
+                {
+                    id = testPAL.First().id,
+                    Data = testPAL.First().Data
+                };
+            }
+
+            /* Default : Assign MENU.PAL palette to image */
+            testPAL = filesBPA.Where(x => x.FileName.Equals("MENU.PAL")).ToList();
+
+            return new PalFileEntry()
+            {
+                id = testPAL.First().id,
+                Data = testPAL.First().Data
+            };
+
+
+           
         }
 
         /// <summary>
