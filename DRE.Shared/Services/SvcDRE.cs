@@ -39,5 +39,10 @@ namespace DRE.Services
         {
             await Task.Run(() => _bpaSvc.WriteBPA(selectedBPA,x));
         }
+
+        public async void ExtractImagesFromBPAs(IProgress<SetupProgress> x)
+        {
+            await Task.Run(() => _bpaSvc.ExtractImagesFromBPAs(x));
+        }
     }
 }

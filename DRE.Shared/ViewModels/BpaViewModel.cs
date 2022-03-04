@@ -117,7 +117,15 @@ namespace DRE.ViewModels
         {
             try
             {
+                x = new Progress<SetupProgress>(value =>
+                {
+                    p = value.p;
+                    msg = Int32.Parse($"{value.p}") + "%";
 
+                });
+
+                await Task.Run(() => _svc.ExtractImagesFromBPAs(x));
+                x.Report(new SetupProgress() { p = 100 });
             }
             catch (Exception) { return; }
 
@@ -135,6 +143,7 @@ namespace DRE.ViewModels
                 });
 
                 await Task.Run(() => _svc.WriteBPA(SelectedBPA,x));
+                x.Report(new SetupProgress() { p = 100 });
             }
             catch (Exception) { return; }
 
@@ -153,6 +162,9 @@ namespace DRE.ViewModels
                 });
 
                 await Task.Run(() => _svc.bpaFileEntryOperation(bpaFile, opCode,x));
+
+                x.Report(new SetupProgress() { p = 100 });
+
             }
             catch (Exception) { return; }
 

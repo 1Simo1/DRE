@@ -48,7 +48,7 @@ namespace DRE.Services
                 opList.Add("ext_img");
             }
 
-            if (value.FileName.Equals("CHATTEXT.BPK"))
+            if (value.FileName.Equals("CHATTEXT.BPK") || value.FileName.Contains("SCE.BPK") || value.FileName.Contains("SHA.BPK"))
             {
                 opList.Remove("ext_img");
             }
@@ -156,8 +156,6 @@ namespace DRE.Services
             File.WriteAllBytes(file_path, exp);
 
         }
-
-      
 
         private List<Byte> Expand_Bpk_Block(List<int> blockCodes)
         {
@@ -406,7 +404,6 @@ namespace DRE.Services
                     case "ROCKET2.BPK": w = 16; h = 384; break;
                     case "PEDESTR.BPK": w = 16; h = 576; break;
                     case "GEN-FLA.BPK": w = 80; h = 3840; break;
-                    case "CHATTEXT.BPK": w = 0; h = 0; break;
                     default: break;
                 }
 
@@ -419,7 +416,6 @@ namespace DRE.Services
 
             return NewExp;
         }
-
 
         /// <summary>
         /// Writes image on disk starting from BPK
@@ -505,6 +501,11 @@ namespace DRE.Services
         private void imgGIF(ExpFileEntry exp, PalFileEntry pal, String baseFileName)
         {
 
+            if (exp.rix)
+            {
+                exp.Data = exp.Data.ToList().GetRange(778, exp.Data.Length - 778).ToArray();
+                exp.rix = false; //Prevents double header removal in memory due to possible multiple image formats writing
+            }
             using (var image = new Bitmap(exp.width, exp.height))
             {
                 int np = 0;
@@ -525,12 +526,14 @@ namespace DRE.Services
                 image.Save($"{baseFileName}.GIF", System.Drawing.Imaging.ImageFormat.Gif);
             }
         }
-
-
-      
-
         private void imgBMP(ExpFileEntry exp, PalFileEntry pal, String baseFileName)
         {
+            if (exp.rix)
+            {
+                exp.Data = exp.Data.ToList().GetRange(778, exp.Data.Length - 778).ToArray();
+                exp.rix = false; //Prevents double header removal in memory due to possible multiple image formats writing
+            }
+
             using (var image = new Bitmap(exp.width, exp.height))
             {
                 int np = 0;
@@ -561,14 +564,29 @@ namespace DRE.Services
         /// <returns>Palette id and data</returns>
         private PalFileEntry assignPAL(BpaFileEntry bpaFile)
         {
-            if (bpaFile.pal != 0) return db.Query<PalFileEntry>("SELECT id, d AS Data FROM pal WHERE id=@id", new { id = bpaFile.pal }).Single();
+            //Test RIX : if true, palette is in exp data header
+
+            var exp = db.Query<ExpFileEntry>(
+               "SELECT id, d AS Data, w AS width, h AS height, rix FROM exp WHERE id=@id", new { id = bpaFile.exp }).FirstOrDefault();
+
+            if (exp.rix)
+            {
+                return new PalFileEntry()
+                {
+                    id = 1000 + exp.id,
+                    Data = exp.Data.ToList().GetRange(10, 768).ToArray()
+                };
+            }
+
+                // PAL already in DB
+                if (bpaFile.pal != 0) return db.Query<PalFileEntry>("SELECT id, d AS Data FROM pal WHERE id=@id", new { id = bpaFile.pal }).Single();
           
             List<BpaFileEntry> filesBPA = BpaFileList(bpaFile.bpaID);
 
           
             /* Search for PAL file with BPK file of same name */
             var testPAL = filesBPA.Where
-                (x => x.FileName.Equals($"{bpaFile.FileName.Substring(0, bpaFile.FileName.Length - 3)}.PAL")).ToList();
+                (x => x.FileName.Equals($"{bpaFile.FileName.Substring(0, bpaFile.FileName.Length - 3)}PAL")).ToList();
 
             if (testPAL.Any())
             {
@@ -583,7 +601,8 @@ namespace DRE.Services
             }
 
             /* Default : Assign MENU.PAL palette to image */
-            testPAL = filesBPA.Where(x => x.FileName.Equals("MENU.PAL")).ToList();
+            testPAL = db.Query<BpaFileEntry>("SELECT id, nf AS FileName, bpa AS bpaID, n, dim AS Size, pal,exp, d as Data " +
+                                             "FROM bpa_files WHERE nf=@m ORDER BY n ASC", new { m = "MENU.PAL" }).ToList();
 
             return new PalFileEntry()
             {
@@ -647,15 +666,77 @@ namespace DRE.Services
 
         }
 
+        public void ExtractImagesFromBPAs(IProgress<SetupProgress> xp)
+        {
+            x = xp;
+
+            x.Report(new SetupProgress() { p = 1 });
+
+            foreach (var bpaFile in ListBpa())
+            {
+                foreach (var bpaFileEntry in BpaFileList(bpaFile.id))
+                {
+                    if (computeBpaFileEntryAvailaibleOperations(bpaFileEntry).Contains("ext_img")) {
+
+                        bpkImg(bpaFileEntry);
+                    }
+                }
+            }
+
+            x.Report(new SetupProgress() { p = 100 });
+        }
+
+
         /// <summary>
         /// OVERWRITES selected BPA file in game folder
         /// </summary>
         /// <param name="selectedBPA">Selected BPA</param>
         public void WriteBPA(BpaFile selectedBPA, IProgress<SetupProgress> xp)
         {
+            if (selectedBPA == null) return;
+
             x = xp;
 
+            List<BpaFileEntry> fileList = BpaFileList(selectedBPA.id);
 
+            List<Byte> header = new List<Byte>();
+
+            List<Byte> data = new List<Byte>();
+
+            header.AddRange(new Byte[4] {(byte) fileList.Count,0,0,0});
+
+
+            int n = 0;
+            foreach (var bpaFileEntry in fileList)
+            {
+                x.Report(new SetupProgress() { p = 100 * n / fileList.Count });
+
+                for (int i = 0; i < bpaFileEntry.FileName.Length; i++)
+                {
+                    int c = (byte)bpaFileEntry.FileName[i] + 117 - 3 * i;
+                    header.Add((byte) c);
+                }
+
+                for (int i = bpaFileEntry.FileName.Length; i < 13; i++) header.Add(0);
+
+                header.AddRange(BitConverter.GetBytes(bpaFileEntry.Size));
+
+                data.AddRange(bpaFileEntry.Data);
+                n++;
+            }
+
+            header.AddRange(new Byte[(255 - fileList.Count)*17]);
+
+
+            List<Byte> bpa = new();
+
+            bpa.AddRange(header);
+            bpa.AddRange(data);
+
+            ///OVERWRITES BPA FILE IN GAME FOLDER!
+            File.WriteAllBytes($"{gameFolder}/{selectedBPA.Name}.BPA",bpa.ToArray());
+
+            x.Report(new SetupProgress() { p = 100 });
         }
 
 

@@ -16,5 +16,6 @@ namespace DRE.Interfaces
         List<String> computeBpaFileEntryAvailaibleOperations(BpaFileEntry value);
         void bpaFileEntryOperation(BpaFileEntry bpaFile, String opCode, IProgress<SetupProgress> x);
         void WriteBPA(BpaFile selectedBPA, IProgress<SetupProgress> x);
+        void ExtractImagesFromBPAs(IProgress<SetupProgress> x);
     }
 }
