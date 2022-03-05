@@ -1,15 +1,12 @@
 ﻿using Dapper;
 using DRE.Libs.Bpa.Models;
 using DRE.Libs.Setup.Models;
-using ImageMagick;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading;
 
 namespace DRE.Services
 {
@@ -21,7 +18,7 @@ namespace DRE.Services
 
         private String gameFolder { get => db.Query<String>("SELECT v FROM DRE WHERE n='c_dre'").First(); }
 
-        private IProgress<SetupProgress> x { get; set;}
+        private IProgress<SetupProgress> x { get; set; }
 
         public SvcBPA(IDbConnection DRE_db) => db = DRE_db;
 
@@ -64,16 +61,16 @@ namespace DRE.Services
         public void bpaFileEntryOperation(BpaFileEntry bpaFile, String opCode, IProgress<SetupProgress> xp)
         {
             x = xp;
-            
+
 
             x.Report(new SetupProgress() { p = 1 });
 
             switch (opCode)
             {
-                case "ext_bpk": bpkExp(bpaFile);break;
-                case "ext_img": bpkImg(bpaFile);break;
-                case "ext_file": extractFileFromBPA(bpaFile);break;
-                case "agg": updateFileIntoBPA(bpaFile);break;
+                case "ext_bpk": bpkExp(bpaFile); break;
+                case "ext_img": bpkImg(bpaFile); break;
+                case "ext_file": extractFileFromBPA(bpaFile); break;
+                case "agg": updateFileIntoBPA(bpaFile); break;
                 default: break;
             }
 
@@ -98,7 +95,8 @@ namespace DRE.Services
 
             Byte[] exp;
 
-            if (bpaFile.exp==0) { // EXP Data not yet in DB
+            if (bpaFile.exp == 0)
+            { // EXP Data not yet in DB
 
                 MemoryStream md = new MemoryStream(bpaFile.Data);
 
@@ -110,7 +108,8 @@ namespace DRE.Services
                 if (codList.LastIndexOf(257) == 0)
                 {
                     w.AddRange(Expand_Bpk_Block(codList));
-                } else
+                }
+                else
                 {
                     var b = IndexesOf(codList, 257);
 
@@ -120,10 +119,10 @@ namespace DRE.Services
                         x.Report(new() { p = (10 * i / b.Count) + 41 });
                     }
 
-                    w.AddRange(Expand_Bpk_Block(codList.GetRange(b[b.Count - 1], codList.Count - b[b.Count - 1])));   
+                    w.AddRange(Expand_Bpk_Block(codList.GetRange(b[b.Count - 1], codList.Count - b[b.Count - 1])));
                 }
-            
-            
+
+
                 exp = w.ToArray();
 
                 int exp_new_id = bpaFile.id;
@@ -146,7 +145,8 @@ namespace DRE.Services
 
 
 
-            } else
+            }
+            else
             { // EXP data already in DB
                 exp = db.Query<ExpFileEntry>("SELECT d as Data FROM exp WHERE id=@exp_id", new { exp_id = bpaFile.exp }).First().Data;
             }
@@ -422,14 +422,14 @@ namespace DRE.Services
         /// </summary>
         /// <param name="bpaFile">BPK file from BPA</param>
         /// <param name="imageFormat">Optional specific output image format, if null all supported image formats are written</param>
-        private void bpkImg(BpaFileEntry bpaFile, String imageFormat=null)
+        private void bpkImg(BpaFileEntry bpaFile, String imageFormat = null)
         {
             if (bpaFile.exp == 0)
             {
                 bpkExp(bpaFile);
                 bpaFile = db.Query<BpaFileEntry>(
                           "SELECT id,nf AS FileName, bpa AS bpaID, n, dim AS Size, pal, exp, d AS Data " +
-                          "FROM bpa_files WHERE id=@id", new {id = bpaFile.id}).Single();
+                          "FROM bpa_files WHERE id=@id", new { id = bpaFile.id }).Single();
             }
 
             x.Report(new() { p = 51 });
@@ -437,12 +437,12 @@ namespace DRE.Services
             ExpFileEntry exp = db.Query<ExpFileEntry>(
                                "SELECT id, d AS Data, w AS width, h AS height, rix FROM exp WHERE id=@id", new { id = bpaFile.exp }).Single();
 
-            PalFileEntry pal = bpaFile.pal == 0 ? 
-                               assignPAL(bpaFile) : 
+            PalFileEntry pal = bpaFile.pal == 0 ?
+                               assignPAL(bpaFile) :
                                db.Query<PalFileEntry>("SELECT id, d AS Data FROM pal WHERE id=@id", new { id = bpaFile.pal }).Single();
 
 
-            String bpaName = db.Query<String>("SELECT nf FROM bpa WHERE id=@id", new { id = bpaFile.bpaID}).First();
+            String bpaName = db.Query<String>("SELECT nf FROM bpa WHERE id=@id", new { id = bpaFile.bpaID }).First();
 
             testDir($"{dir}");
             testDir($"{dir}/BPA");
@@ -458,7 +458,8 @@ namespace DRE.Services
                 x.Report(new() { p = 75 });
                 imgBMP(exp, pal, baseFileName);
                 x.Report(new() { p = 95 });
-            } else
+            }
+            else
             {
                 switch (imageFormat)
                 {
@@ -514,9 +515,9 @@ namespace DRE.Services
                     for (int h = 0; h < exp.width; h++)
                     {
                         image.SetPixel(h, w, Color.FromArgb(
-                            pal.Data[(exp.Data[np])*3]*4,
-                            pal.Data[(exp.Data[np]) * 3+1] * 4,
-                            pal.Data[(exp.Data[np]) * 3+2] * 4
+                            pal.Data[(exp.Data[np]) * 3] * 4,
+                            pal.Data[(exp.Data[np]) * 3 + 1] * 4,
+                            pal.Data[(exp.Data[np]) * 3 + 2] * 4
                             ));
 
                         np++;
@@ -578,12 +579,12 @@ namespace DRE.Services
                 };
             }
 
-                // PAL already in DB
-                if (bpaFile.pal != 0) return db.Query<PalFileEntry>("SELECT id, d AS Data FROM pal WHERE id=@id", new { id = bpaFile.pal }).Single();
-          
+            // PAL already in DB
+            if (bpaFile.pal != 0) return db.Query<PalFileEntry>("SELECT id, d AS Data FROM pal WHERE id=@id", new { id = bpaFile.pal }).Single();
+
             List<BpaFileEntry> filesBPA = BpaFileList(bpaFile.bpaID);
 
-          
+
             /* Search for PAL file with BPK file of same name */
             var testPAL = filesBPA.Where
                 (x => x.FileName.Equals($"{bpaFile.FileName.Substring(0, bpaFile.FileName.Length - 3)}PAL")).ToList();
@@ -611,7 +612,7 @@ namespace DRE.Services
             };
 
 
-           
+
         }
 
         /// <summary>
@@ -646,7 +647,8 @@ namespace DRE.Services
 
             String file_path = $"{dir}/BPA/{bpaName}/{bpaFile.FileName}";
 
-            if (File.Exists(file_path)) { 
+            if (File.Exists(file_path))
+            {
 
                 bpaFile.Data = File.ReadAllBytes(file_path);
 
@@ -656,7 +658,7 @@ namespace DRE.Services
                     id = bpaFile.id
                 });
 
-                if (bpaFile.exp!=0)
+                if (bpaFile.exp != 0)
                 {
                     db.Query("DELETE FROM exp WHERE id=@id", new { id = bpaFile.exp });
                     db.Query("UPDATE bpa_files SET exp=0 WHERE id=@id", new { id = bpaFile.id });
@@ -676,7 +678,8 @@ namespace DRE.Services
             {
                 foreach (var bpaFileEntry in BpaFileList(bpaFile.id))
                 {
-                    if (computeBpaFileEntryAvailaibleOperations(bpaFileEntry).Contains("ext_img")) {
+                    if (computeBpaFileEntryAvailaibleOperations(bpaFileEntry).Contains("ext_img"))
+                    {
 
                         bpkImg(bpaFileEntry);
                     }
@@ -703,7 +706,7 @@ namespace DRE.Services
 
             List<Byte> data = new List<Byte>();
 
-            header.AddRange(new Byte[4] {(byte) fileList.Count,0,0,0});
+            header.AddRange(new Byte[4] { (byte)fileList.Count, 0, 0, 0 });
 
 
             int n = 0;
@@ -714,7 +717,7 @@ namespace DRE.Services
                 for (int i = 0; i < bpaFileEntry.FileName.Length; i++)
                 {
                     int c = (byte)bpaFileEntry.FileName[i] + 117 - 3 * i;
-                    header.Add((byte) c);
+                    header.Add((byte)c);
                 }
 
                 for (int i = bpaFileEntry.FileName.Length; i < 13; i++) header.Add(0);
@@ -725,7 +728,7 @@ namespace DRE.Services
                 n++;
             }
 
-            header.AddRange(new Byte[(255 - fileList.Count)*17]);
+            header.AddRange(new Byte[(255 - fileList.Count) * 17]);
 
 
             List<Byte> bpa = new();
@@ -734,7 +737,7 @@ namespace DRE.Services
             bpa.AddRange(data);
 
             ///OVERWRITES BPA FILE IN GAME FOLDER!
-            File.WriteAllBytes($"{gameFolder}/{selectedBPA.Name}.BPA",bpa.ToArray());
+            File.WriteAllBytes($"{gameFolder}/{selectedBPA.Name}.BPA", bpa.ToArray());
 
             x.Report(new SetupProgress() { p = 100 });
         }

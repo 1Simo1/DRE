@@ -28,11 +28,200 @@
                        Foreground="White"
                        />
         </muxc:Border>
-        
+
         <Grid Grid.Row="1" Margin="21">
-            <TextBlock Text="SG" />
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+
+            <muxc:StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2">
+                <ListBox VerticalAlignment="Center" 
+                     ItemsSource="{Binding saveGameList,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"
+                     SelectedItem="{Binding SelectedSG,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"
+         
+                     Margin="21,3"
+                     BorderThickness="1"
+                     BorderBrush="{ThemeResource ContentDialogBorderThemeBrush}"
+                     >
+                    <ListBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal"/>
+                        </ItemsPanelTemplate>
+                    </ListBox.ItemsPanel>
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Vertical">
+                            <TextBlock Text="{Binding FileName}" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="21,0,21,3" />
+                            <TextBlock Text="{Binding ValueText}" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+
+                <Button Background="{ThemeResource ButtonBackgroundThemeBrush}" VerticalAlignment="Center" Margin="21,0"
+                        Command="{Binding WriteSGCmd}"
+                        BorderThickness="1"
+                        BorderBrush="{ThemeResource ButtonBorderThemeBrush}"
+                        >
+                    <TextBlock Text="{Binding Source='sgp',Converter={StaticResource Translator}}" />
+                </Button>
+
+            </muxc:StackPanel>
+
+            <Grid Grid.Row="1" Grid.Column="1" BorderBrush="{ThemeResource AppBarBorderThemeBrush}" BorderThickness="1" Background="{ThemeResource AppBarBackgroundThemeBrush}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition  Width="Auto" />
+                    <ColumnDefinition  />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+
+                <Grid Grid.Column="0" Grid.Row="0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Text="{Binding Source='file_n',Converter={StaticResource Translator}}" Grid.Column="0" Grid.Row="0" Margin="3"/>
+                <TextBlock Text="{Binding InfoSG.FileName,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" Grid.Column="1" Grid.Row="0" Margin="3"/>
+
+                <TextBlock Text="{Binding Source='key',Converter={StaticResource Translator}}" Grid.Column="0" Grid.Row="1" Margin="3"/>
+                <TextBox Text="{Binding InfoSG.Key,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" Grid.Column="1" Grid.Row="1"  Margin="3"/>
+
+                <TextBlock Text="{Binding Source='did',Converter={StaticResource Translator}}" Grid.Column="0" Grid.Row="2" Margin="3"/>
+                <TextBox Text="{Binding InfoSG.PlayerIndex,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" Grid.Column="1" Grid.Row="2" Margin="3"/>
+
+                <TextBlock Text="{Binding Source='wps',Converter={StaticResource Translator}}" Grid.Column="0" Grid.Row="3" Margin="3"/>
+                <CheckBox IsChecked="{Binding InfoSG.UseWeapons,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" Grid.Column="1" Grid.Row="3" Margin="3"/>
+
+                <TextBlock Text="{Binding Source='diff',Converter={StaticResource Translator}}" Grid.Column="0" Grid.Row="4" Margin="3"/>
+                <TextBox Text="{Binding InfoSG.Level,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" Grid.Column="1" Grid.Row="4"  Margin="3"/>
 
 
+                <TextBlock Text="{Binding Source='sgn',Converter={StaticResource Translator}}" Grid.Column="0" Grid.Row="5" Margin="3"/>
+                <TextBox Text="{Binding InfoSG.SaveGameName,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" Grid.Column="1" Grid.Row="5" Margin="3"/>
+                </Grid>
+
+                <ListBox Grid.Column="0" Grid.Row="1" Padding="21"
+                         ItemsSource="{Binding SaveGameDriverList,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"
+                         SelectedItem="{Binding DriverInfo,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"
+                         />
+
+
+                <ScrollViewer VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Hidden" Grid.Column="1"  Grid.RowSpan="2">
+                <Grid Background="AliceBlue">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                        <Grid.Resources>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Margin" Value="21" />
+                                <Setter Property="VerticalAlignment" Value="Center" />
+                            </Style>
+                            <Style TargetType="TextBox">
+                                <Setter Property="Margin" Value="21" />
+                                <Setter Property="VerticalAlignment" Value="Center" />
+                            </Style>
+                        </Grid.Resources>
+                    
+                    
+                    <TextBlock Text="{Binding Source='np',Converter={StaticResource Translator}}" Grid.Row="0" Grid.Column="0"/>
+                    <TextBlock Text="{Binding Source='dm',Converter={StaticResource Translator}}" Grid.Row="1" Grid.Column="0"/>
+                    <TextBlock Text="{Binding Source='lm',Converter={StaticResource Translator}}" Grid.Row="2" Grid.Column="0"/>
+                    <TextBlock Text="{Binding Source='la',Converter={StaticResource Translator}}" Grid.Row="3" Grid.Column="0"/>
+                    <TextBlock Text="{Binding Source='auto',Converter={StaticResource Translator}}" Grid.Row="4" Grid.Column="0"/>
+                    <TextBlock Text="{Binding Source='?#1',Converter={StaticResource Translator}}" Grid.Row="5" Grid.Column="0"/>
+                    <TextBlock Text="{Binding Source='?#2',Converter={StaticResource Translator}}" Grid.Row="6" Grid.Column="0"/>
+                    <TextBlock Text="{Binding Source='?#3',Converter={StaticResource Translator}}" Grid.Row="7" Grid.Column="0"/>
+                    <TextBlock Text="{Binding Source='col',Converter={StaticResource Translator}}" Grid.Row="8" Grid.Column="0"/>
+                    <TextBlock Text="{Binding Source='mon',Converter={StaticResource Translator}}" Grid.Row="9" Grid.Column="0"/>
+                    <TextBlock Text="{Binding Source='tp',Converter={StaticResource Translator}}" Grid.Row="10" Grid.Column="0"/>
+                    <TextBlock Text="{Binding Source='lrf',Converter={StaticResource Translator}}" Grid.Row="11" Grid.Column="0"/>
+                    <TextBlock Text="{Binding Source='cv',Converter={StaticResource Translator}}" Grid.Row="12" Grid.Column="0"/>
+                    <TextBlock Text="{Binding Source='fd',Converter={StaticResource Translator}}" Grid.Row="13" Grid.Column="0"/>
+                    <TextBlock Text="{Binding Source='pts',Converter={StaticResource Translator}}" Grid.Row="14" Grid.Column="0"/>
+                    <TextBlock Text="{Binding Source='pos',Converter={StaticResource Translator}}" Grid.Row="15" Grid.Column="0"/>
+                    <TextBlock Text="{Binding Source='rw',Converter={StaticResource Translator}}" Grid.Row="16" Grid.Column="0"/>
+                    <TextBlock Text="{Binding Source='rt',Converter={StaticResource Translator}}" Grid.Row="17" Grid.Column="0"/>
+                    <TextBlock Text="{Binding Source='?#4',Converter={StaticResource Translator}}" Grid.Row="18" Grid.Column="0"/>
+                    <TextBlock Text="{Binding Source='tnc',Converter={StaticResource Translator}}" Grid.Row="19" Grid.Column="0"/>
+                    <TextBlock Text="{Binding Source='mn',Converter={StaticResource Translator}}" Grid.Row="20" Grid.Column="0"/>
+                    <TextBlock Text="{Binding Source='sp',Converter={StaticResource Translator}}" Grid.Row="21" Grid.Column="0"/>
+                    <TextBlock Text="{Binding Source='rf',Converter={StaticResource Translator}}" Grid.Row="22" Grid.Column="0"/>
+                    <TextBlock Text="{Binding Source='sab',Converter={StaticResource Translator}}" Grid.Row="23" Grid.Column="0"/>
+
+                    <TextBox Text="{Binding DriverDetails.Name,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" Grid.Row="0" Grid.Column="1"/>
+                    <TextBox Text="{Binding DriverDetails.Engine,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" Grid.Row="1" Grid.Column="1"/>
+                    <TextBox Text="{Binding DriverDetails.Tyre,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" Grid.Row="2" Grid.Column="1"/>
+                    <TextBox Text="{Binding DriverDetails.Armour,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" Grid.Row="3" Grid.Column="1"/>
+                    <TextBox Text="{Binding DriverDetails.CarType,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" Grid.Row="4" Grid.Column="1"/>
+                    <TextBox Text="{Binding DriverDetails.Unknown_one,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" Grid.Row="5" Grid.Column="1"/>
+                    <TextBox Text="{Binding DriverDetails.Unknown_two,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" Grid.Row="6" Grid.Column="1"/>
+                    <TextBox Text="{Binding DriverDetails.Unknown_three,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" Grid.Row="7" Grid.Column="1"/>
+                    <TextBox Text="{Binding DriverDetails.Color,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" Grid.Row="8" Grid.Column="1"/>
+                    <TextBox Text="{Binding DriverDetails.Money,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" Grid.Row="9" Grid.Column="1"/>
+                    <TextBox Text="{Binding DriverDetails.LoanType,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" Grid.Row="10" Grid.Column="1"/>
+                    <TextBox Text="{Binding DriverDetails.LoanRacesLeft,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" Grid.Row="11" Grid.Column="1"/>
+                    <TextBox Text="{Binding DriverDetails.CarValue,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" Grid.Row="12" Grid.Column="1"/>
+                    <TextBox Text="{Binding DriverDetails.FaceId,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" Grid.Row="13" Grid.Column="1"/>
+                    <TextBox Text="{Binding DriverDetails.Points,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" Grid.Row="14" Grid.Column="1"/>
+                    <TextBox Text="{Binding DriverDetails.Rank,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" Grid.Row="15" Grid.Column="1"/>
+                    <TextBox Text="{Binding DriverDetails.Victories,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" Grid.Row="16" Grid.Column="1"/>
+                    <TextBox Text="{Binding DriverDetails.TotalRaces,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" Grid.Row="17" Grid.Column="1"/>
+                    <TextBox Text="{Binding DriverDetails.Unknown_four,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" Grid.Row="18" Grid.Column="1"/>
+                    <TextBox Text="{Binding DriverDetails.TotalIncome,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" Grid.Row="19" Grid.Column="1"/>
+                    <TextBox Text="{Binding DriverDetails.Mines,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" Grid.Row="20" Grid.Column="1"/>
+                    <CheckBox IsChecked="{Binding DriverDetails.Spikes,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" Grid.Row="21" Grid.Column="1"/>
+                    <CheckBox IsChecked="{Binding DriverDetails.Rocket,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" Grid.Row="22" Grid.Column="1"/>
+                    <CheckBox IsChecked="{Binding DriverDetails.Sabotage,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" Grid.Row="23" Grid.Column="1"/>
+
+                </Grid>
+                </ScrollViewer>
+            </Grid>
+
+           
 
 
         </Grid>

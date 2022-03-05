@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using DRE.Interfaces;
 using DRE.Libs.Bpa.Models;
+using DRE.Libs.SaveGame.Models;
 using DRE.Libs.Setup;
 using DRE.Libs.Setup.Models;
 using System;
@@ -17,9 +18,12 @@ namespace DRE.Services
 
         private SvcBPA _bpaSvc { get; set; }
 
+        private SvcSG _sgSvc { get; set; }
+
         public SvcDRE()
         {
             _bpaSvc = new SvcBPA(db);
+            _sgSvc = new SvcSG(db);
         }
 
         public List<BpaFile> ListBpa() => _bpaSvc.ListBpa();
@@ -44,5 +48,14 @@ namespace DRE.Services
         {
             await Task.Run(() => _bpaSvc.ExtractImagesFromBPAs(x));
         }
+
+        public List<SaveGameEntry> saveGameList() => _sgSvc.List();
+
+        public SaveGameInfo SaveGameInfo(String fileName) => _sgSvc.SaveGameInfo(fileName);
+
+        public List<SaveGameEntry> SaveGameDriverList(string fileName) => _sgSvc.SaveGameDriverList(fileName);
+
+        public DriverInfo SaveGameDriverDetails(string fileName, int p) => _sgSvc.SaveGameDriverDetails(fileName,p);
+        
     }
 }

@@ -1,10 +1,10 @@
 ﻿using DRE.Libs.Bpa.Models;
+using DRE.Libs.SaveGame.Models;
 using DRE.Libs.Setup;
 using DRE.Libs.Setup.Models;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Text;
 
 namespace DRE.Interfaces
 {
@@ -17,5 +17,10 @@ namespace DRE.Interfaces
         void bpaFileEntryOperation(BpaFileEntry bpaFile, String opCode, IProgress<SetupProgress> x);
         void WriteBPA(BpaFile selectedBPA, IProgress<SetupProgress> x);
         void ExtractImagesFromBPAs(IProgress<SetupProgress> x);
+        List<SaveGameEntry> saveGameList();
+        SaveGameInfo SaveGameInfo(string fileName);
+        List<SaveGameEntry> SaveGameDriverList(string fileName);
+        
+        DriverInfo SaveGameDriverDetails(string fileName, int p);
     }
 }
