@@ -20,7 +20,9 @@ namespace DRE.Interfaces
         List<SaveGameEntry> saveGameList();
         SaveGameInfo SaveGameInfo(string fileName);
         List<SaveGameEntry> SaveGameDriverList(string fileName);
-        
         DriverInfo SaveGameDriverDetails(string fileName, int p);
+        void SaveGameUpdateDriverDetails(DriverInfo driverDetails, SaveGameInfo info, SaveGameEntry DriverInfo);
+        void SaveGameWriteFile(string fileName);
+        void UpdateSaveGamesFromGameFolder();
     }
 }

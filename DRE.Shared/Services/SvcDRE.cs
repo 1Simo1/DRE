@@ -56,6 +56,13 @@ namespace DRE.Services
         public List<SaveGameEntry> SaveGameDriverList(string fileName) => _sgSvc.SaveGameDriverList(fileName);
 
         public DriverInfo SaveGameDriverDetails(string fileName, int p) => _sgSvc.SaveGameDriverDetails(fileName,p);
-        
+
+        public void SaveGameUpdateDriverDetails(DriverInfo driverDetails, SaveGameInfo info, SaveGameEntry DriverInfo) => 
+            _sgSvc.SaveGameUpdateDriverDetails(driverDetails,info,DriverInfo);
+
+        public void SaveGameWriteFile(string fileName) => _sgSvc.Write(fileName);
+
+        public void UpdateSaveGamesFromGameFolder() => _sgSvc.UpdateSaveGamesFromGameFolder();
+       
     }
 }

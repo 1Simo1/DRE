@@ -70,6 +70,14 @@
                         >
                     <TextBlock Text="{Binding Source='sgp',Converter={StaticResource Translator}}" />
                 </Button>
+                
+                  <Button Background="{ThemeResource ButtonBackgroundThemeBrush}" VerticalAlignment="Center" Margin="21,0"
+                        Command="{Binding UpdateFromGameFolderCmd}"
+                        BorderThickness="1"
+                        BorderBrush="{ThemeResource ButtonBorderThemeBrush}"
+                        >
+                    <TextBlock Text="{Binding Source='agg_file',Converter={StaticResource Translator}}" />
+                </Button>
 
             </muxc:StackPanel>
 

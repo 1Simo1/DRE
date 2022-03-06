@@ -30,10 +30,13 @@ namespace DRE.ViewModels
                 }
 
                 SetProperty(ref _selectedSG, value);
+                WriteSGCmd.NotifyCanExecuteChanged();
             }
         }
 
         public IRelayCommand WriteSGCmd { get; }
+
+        public IRelayCommand UpdateFromGameFolderCmd { get; }
 
         private SaveGameInfo _info;
         public SaveGameInfo InfoSG
@@ -58,6 +61,7 @@ namespace DRE.ViewModels
 
                 if (value != null && value != DriverInfo)
                 {
+                    _svc.SaveGameUpdateDriverDetails(DriverDetails,InfoSG,DriverInfo); //Updates previous selected driver data in DB
                     DriverDetails = _svc.SaveGameDriverDetails(value.FileName,value.Position);
                 }
 
@@ -81,16 +85,31 @@ namespace DRE.ViewModels
 
             saveGameList = new ObservableCollection<SaveGameEntry>(_svc.saveGameList());
 
-            WriteSGCmd = new RelayCommand(SaveFile);
-        
+            WriteSGCmd = new RelayCommand(SaveFile,CanSaveFile);
+
+            UpdateFromGameFolderCmd = new RelayCommand(UpdateFromGameFolder);
+
+
         }
-        
-        
-        
+
+     
+
+        private bool CanSaveFile() => SelectedSG != null;
+    
         private void SaveFile()
-        { 
-        
+        {
+            _svc.SaveGameUpdateDriverDetails(DriverDetails,InfoSG,DriverInfo); //Updates previous selected driver data in DB
+
+            _svc.SaveGameWriteFile(SelectedSG.FileName);
+
         }
-            
+
+        private void UpdateFromGameFolder() 
+        {
+            _svc.UpdateSaveGamesFromGameFolder();
+            saveGameList = new ObservableCollection<SaveGameEntry>(_svc.saveGameList());
+        }
+
+
     }
 }
