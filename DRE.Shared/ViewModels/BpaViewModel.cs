@@ -89,6 +89,25 @@ namespace DRE.ViewModels
             set { SetProperty(ref _bpaFileAvailableOperationList, value); }
         }
 
+#if HAS_UNO_SKIA
+
+        private String _sop;
+        public String SelectedOP
+        {
+            get { return _sop; }
+            set { 
+            if (value!=null && _sop != value)
+                {
+                    bpaFileEntryOperation(value);
+                }
+                SetProperty(ref _sop, value); 
+            
+            }
+        }
+
+#endif
+
+
         public IRelayCommand<String> bpaOpCmd { get; }
 
 

@@ -23,6 +23,7 @@ namespace DRE.MarkupExtensions
 
         public object Convert(object value, Type targetType, object p, string language)
         {
+            if (value == null) return null;
 
             if (L == null) L = DRE.Libs.Setup.LibSetup.db.Query<String>("SELECT v FROM DRE WHERE n='defaultLanguage'").AsList().First();
 

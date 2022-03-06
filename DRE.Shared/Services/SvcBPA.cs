@@ -503,6 +503,10 @@ namespace DRE.Services
         private void imgGIF(ExpFileEntry exp, PalFileEntry pal, String baseFileName)
         {
 
+            #if HAS_UNO_SKIA
+                return;
+            #else
+
             if (exp.rix)
             {
                 exp.Data = exp.Data.ToList().GetRange(778, exp.Data.Length - 778).ToArray();
@@ -527,9 +531,16 @@ namespace DRE.Services
 
                 image.Save($"{baseFileName}.GIF", System.Drawing.Imaging.ImageFormat.Gif);
             }
+#endif
         }
+
         private void imgBMP(ExpFileEntry exp, PalFileEntry pal, String baseFileName)
         {
+
+#if HAS_UNO_SKIA
+                return;
+#else
+
             if (exp.rix)
             {
                 exp.Data = exp.Data.ToList().GetRange(778, exp.Data.Length - 778).ToArray();
@@ -556,6 +567,7 @@ namespace DRE.Services
 
                 image.Save($"{baseFileName}.BMP", System.Drawing.Imaging.ImageFormat.Bmp);
             }
+#endif
         }
 
 

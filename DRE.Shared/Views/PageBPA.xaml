@@ -8,7 +8,9 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:t="using:DRE.MarkupExtensions"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
-    mc:Ignorable="d"
+    mc:Ignorable="d netstdref"
+    xmlns:win="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:netstdref="http://uno.ui/netstdref"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Page.Resources>
@@ -66,8 +68,8 @@
 
            </Grid>
 
-            <muxc:StackPanel Orientation="Horizontal" Grid.Row="1">
-                <ListBox VerticalAlignment="Center" 
+            <StackPanel Orientation="Horizontal" Grid.Row="1">
+                <win:ListBox VerticalAlignment="Center" 
                      ItemsSource="{Binding bpaList,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"
                      SelectedItem="{Binding SelectedBPA,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"
          
@@ -75,17 +77,34 @@
                      BorderThickness="1"
                      BorderBrush="{ThemeResource ContentDialogBorderThemeBrush}"
                      >
-                <ListBox.ItemsPanel>
+                <win:ListBox.ItemsPanel>
                     <ItemsPanelTemplate>
                         <StackPanel Orientation="Horizontal"/>
                     </ItemsPanelTemplate>
-                </ListBox.ItemsPanel>
-                <ListBox.ItemTemplate>
+                </win:ListBox.ItemsPanel>
+                <win:ListBox.ItemTemplate>
                     <DataTemplate>
                         <TextBlock Text="{Binding Name}" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="21,0" />
                     </DataTemplate>
-                </ListBox.ItemTemplate>
-                </ListBox>
+                </win:ListBox.ItemTemplate>
+                </win:ListBox>
+                
+                <netstdref:ComboBox VerticalAlignment="Center" 
+                     ItemsSource="{Binding bpaList,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"
+                     SelectedItem="{Binding SelectedBPA,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"
+         
+                     Margin="21,3"
+                     BorderThickness="1"
+                     BorderBrush="{ThemeResource ContentDialogBorderThemeBrush}"
+                     >
+             
+                <netstdref:ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Name}" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="21,0" />
+                    </DataTemplate>
+                </netstdref:ComboBox.ItemTemplate>
+                </netstdref:ComboBox>
+                
 
                 <Button Background="{ThemeResource ButtonBackgroundThemeBrush}" VerticalAlignment="Center" Margin="21,0"
                         Command="{Binding WriteBPACmd}"
@@ -95,7 +114,7 @@
                     <TextBlock Text="{Binding Source='drbpa',Converter={StaticResource Translator}}" />
                 </Button>
 
-            </muxc:StackPanel>
+            </StackPanel>
 
             <Grid Margin="21" Grid.Row="2">
                 <Grid.ColumnDefinitions>
@@ -152,27 +171,39 @@
                     <TextBlock Text="{Binding Source='gst',Converter={StaticResource Translator}}" Grid.Row="2" Grid.Column="0" Margin="21"/>
 
 
-                    <muxc:ListView Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" BorderThickness="1"
+                    <win:ListView Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" BorderThickness="1"
                       BorderBrush="{ThemeResource ContentDialogBorderThemeBrush}"
                                   ItemsSource="{Binding OpList,Mode=TwoWay}"
                                   HorizontalContentAlignment="Stretch"
                                   x:Name="cmdList"
                                   >
-                        <muxc:ListView.ItemTemplate>
+                        <win:ListView.ItemTemplate>
                             <DataTemplate>
-                            <Button 
-                                            Command="{Binding DataContext.bpaOpCmd,ElementName=cmdList}" 
+                            <Button Command="{Binding DataContext.bpaOpCmd,ElementName=cmdList}" 
                                             CommandParameter="{Binding}" HorizontalAlignment="Stretch" Margin="11"
                                             BorderThickness="0"
-                                Background="Transparent"
-                                            >
-                                <TextBlock Text="{Binding Source={Binding},Converter={StaticResource Translator}}" />
+                                            Background="Transparent"
+                            >
+                                <win:TextBlock Text="{Binding {Binding .},Converter={StaticResource Translator}}" />
                             </Button>
                             </DataTemplate>
-                        </muxc:ListView.ItemTemplate>
-                    </muxc:ListView>
-                    
-                    
+                        </win:ListView.ItemTemplate>
+                    </win:ListView>
+
+                    <netstdref:ComboBox Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" BorderThickness="1"
+                                  BorderBrush="{ThemeResource ContentDialogBorderThemeBrush}"
+                                  ItemsSource="{Binding OpList,Mode=TwoWay}"
+                                  SelectedItem="{Binding SelectedOP,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"      
+                                  HorizontalContentAlignment="Stretch"
+                                  >
+                        <netstdref:ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding .,Converter={StaticResource Translator}}"
+                                           VerticalAlignment="Center" HorizontalAlignment="Center" Margin="21,0" />
+                            </DataTemplate>
+                        </netstdref:ComboBox.ItemTemplate>
+
+                    </netstdref:ComboBox>
                
               
 
