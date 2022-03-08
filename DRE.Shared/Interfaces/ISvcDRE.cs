@@ -2,9 +2,11 @@
 using DRE.Libs.SaveGame.Models;
 using DRE.Libs.Setup;
 using DRE.Libs.Setup.Models;
+using DRE.Libs.Trk.Models;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Threading.Tasks;
 
 namespace DRE.Interfaces
 {
@@ -24,5 +26,8 @@ namespace DRE.Interfaces
         void SaveGameUpdateDriverDetails(DriverInfo driverDetails, SaveGameInfo info, SaveGameEntry DriverInfo);
         void SaveGameWriteFile(string fileName);
         void UpdateSaveGamesFromGameFolder();
+        List<TrkFile> trackList();
+        Task<TrkInfo> LoadTrack(int id, IProgress<float> x);
+
     }
 }

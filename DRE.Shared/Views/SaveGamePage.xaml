@@ -93,10 +93,6 @@
 
             </muxc:StackPanel>
 
-            
-            
-            
-            
             <Grid Grid.Row="1" Grid.Column="1" BorderBrush="{ThemeResource AppBarBorderThemeBrush}" BorderThickness="1" Background="{ThemeResource AppBarBackgroundThemeBrush}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition  Width="Auto" />

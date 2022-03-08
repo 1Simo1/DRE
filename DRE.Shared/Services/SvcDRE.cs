@@ -4,6 +4,7 @@ using DRE.Libs.Bpa.Models;
 using DRE.Libs.SaveGame.Models;
 using DRE.Libs.Setup;
 using DRE.Libs.Setup.Models;
+using DRE.Libs.Trk.Models;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -20,10 +21,13 @@ namespace DRE.Services
 
         private SvcSG _sgSvc { get; set; }
 
+        private SvcTRK _trkSvc { get; set; }
+
         public SvcDRE()
         {
             _bpaSvc = new SvcBPA(db);
             _sgSvc = new SvcSG(db);
+            _trkSvc = new SvcTRK(db);
         }
 
         public List<BpaFile> ListBpa() => _bpaSvc.ListBpa();
@@ -63,6 +67,10 @@ namespace DRE.Services
         public void SaveGameWriteFile(string fileName) => _sgSvc.Write(fileName);
 
         public void UpdateSaveGamesFromGameFolder() => _sgSvc.UpdateSaveGamesFromGameFolder();
+
+        public List<TrkFile> trackList() => _trkSvc.List();
+
+        public async Task<TrkInfo> LoadTrack(int id, IProgress<float> x) => await Task.Run(() => _trkSvc.LoadTrack(id, x, db));
        
     }
 }

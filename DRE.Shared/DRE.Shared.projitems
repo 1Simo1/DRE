@@ -30,6 +30,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Services\SvcBPA.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\SvcDRE.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\SvcSG.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\SvcTRK.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\BpaViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\HomeViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\SaveGameViewModel.cs" />

@@ -173,7 +173,7 @@ namespace DRE.Libs.Setup
                     {
                         db.Query("INSERT INTO trk(id,nf,tr,f) VALUES(@id,@nf,@tr,@f)", new
                         {
-                            id = ntrk.Id,
+                            id = ntrk.id,
                             nf = ntrk.Name,
                             tr = ntrk.trNumber,
                             f = ntrk.IsFlipped
@@ -198,9 +198,13 @@ namespace DRE.Libs.Setup
                         });
                     }
 
-                    db.Query("CREATE TABLE IF NOT EXISTS trk_info(id INTEGER PRIMARY KEY, trk INTEGER NOT NULL,c text NOT NULL,v INTEGER)");
+                    db.Query("CREATE TABLE IF NOT EXISTS trk_info(id INTEGER PRIMARY KEY AUTOINCREMENT, trk INTEGER NOT NULL,a INTEGER NOT NULL,v INTEGER)");
 
                     db.Query("CREATE TABLE IF NOT EXISTS trk_files(id INTEGER PRIMARY KEY, trk INTEGER NOT NULL,NF text NOT NULL,n INTEGER,d BLOB NOT NULL,UNIQUE(trk,NF,n))");
+
+                    /* Load Track infos and files in initial setup? [...] */
+
+                    /* */
 
                     Cfg = new LibCfg(c_dre);
 
