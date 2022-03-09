@@ -7,7 +7,6 @@ using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Drawing;
 
 namespace DRE.Services
 {
@@ -59,7 +58,7 @@ namespace DRE.Services
             return opList;
         }
 
-        public void bpaFileEntryOperation(BpaFileEntry bpaFile, String opCode, IProgress<SetupProgress> xp)
+        public void bpaFileEntryOperation(BpaFileEntry bpaFile, String opCode, IProgress<SetupProgress> xp, bool IsTrackFlipped = false)
         {
             x = xp;
 
@@ -69,7 +68,7 @@ namespace DRE.Services
             switch (opCode)
             {
                 case "ext_bpk": bpkExp(bpaFile); break;
-                case "ext_img": bpkImg(bpaFile); break;
+                case "ext_img": bpkImg(bpaFile, null, IsTrackFlipped, false); break;
                 case "ext_file": extractFileFromBPA(bpaFile); break;
                 case "agg": updateFileIntoBPA(bpaFile); break;
                 default: break;
@@ -83,7 +82,7 @@ namespace DRE.Services
         /// </summary>
         /// <param name="bpaFile">BPK file from BPA to expand</param>
         /// <param name="x">Operation progress provider</param>
-        private void bpkExp(BpaFileEntry bpaFile)
+        public void bpkExp(BpaFileEntry bpaFile)
         {
 
             String bpaName = db.Query<String>("SELECT nf FROM bpa WHERE id=@bpa_id", new { bpa_id = bpaFile.bpaID }).First();
@@ -423,8 +422,11 @@ namespace DRE.Services
         /// </summary>
         /// <param name="bpaFile">BPK file from BPA</param>
         /// <param name="imageFormat">Optional specific output image format, if null all supported image formats are written</param>
-        private void bpkImg(BpaFileEntry bpaFile, String imageFormat = null)
+        public void bpkImg(BpaFileEntry bpaFile, String imageFormat = null, bool IsTrackFlipped = false, bool IsTrackMode = false)
         {
+
+            if (x == null) x = new Progress<SetupProgress>();
+
             if (bpaFile.exp == 0)
             {
                 bpkExp(bpaFile);
@@ -439,17 +441,54 @@ namespace DRE.Services
                                "SELECT id, d AS Data, w AS width, h AS height, rix FROM exp WHERE id=@id", new { id = bpaFile.exp }).Single();
 
             PalFileEntry pal = bpaFile.pal == 0 ?
-                               assignPAL(bpaFile) :
+                               assignPAL(bpaFile, IsTrackFlipped) :
                                db.Query<PalFileEntry>("SELECT id, d AS Data FROM pal WHERE id=@id", new { id = bpaFile.pal }).Single();
 
 
             String bpaName = db.Query<String>("SELECT nf FROM bpa WHERE id=@id", new { id = bpaFile.bpaID }).First();
 
-            testDir($"{dir}");
-            testDir($"{dir}/BPA");
-            testDir($"{dir}/BPA/{bpaName}");
+            String baseFileName = String.Empty;
 
-            String baseFileName = $"{dir}/BPA/{bpaName}/{bpaFile.FileName}";
+            if (!IsTrackMode)
+            {
+
+                testDir($"{dir}");
+                testDir($"{dir}/BPA");
+                testDir($"{dir}/BPA/{bpaName}");
+                baseFileName = $"{dir}/BPA/{bpaName}/{bpaFile.FileName}";
+
+            }
+            else
+            {
+                String trkName = String.Empty;
+
+
+                if (bpaFile.FileName.StartsWith("TR")) //Track Image
+                {
+                    trkName = db.Query<String>("SELECT nf FROM trk WHERE tr=@tr AND f=@f", new
+                    {
+                        tr = Int32.Parse(bpaFile.FileName.Substring(2, 1)),
+                        f = IsTrackFlipped
+                    }).Single().Replace(" ", "_");
+                }
+                else // Track Shape Image
+                {
+                    trkName = db.Query<String>("SELECT nf FROM trk WHERE id=@tr", new
+                    {
+                        tr = Int32.Parse(bpaFile.FileName.Substring(6, 2))
+                    }).Single().Replace(" ", "_");
+
+                }
+
+
+                testDir($"{dir}");
+                testDir($"{dir}/TRK");
+                testDir($"{dir}/TRK/{trkName}");
+
+                baseFileName = $"{dir}/TRK/{trkName}/{bpaFile.FileName}";
+            }
+
+
 
             if (String.IsNullOrEmpty(imageFormat))
             {
@@ -473,7 +512,7 @@ namespace DRE.Services
             x.Report(new() { p = 95 });
         }
 
-        private void imgRIX(ExpFileEntry exp, PalFileEntry pal, String baseFileName)
+        public void imgRIX(ExpFileEntry exp, PalFileEntry pal, String baseFileName)
         {
             if (exp.rix)
             {
@@ -500,12 +539,12 @@ namespace DRE.Services
             File.WriteAllBytes($"{baseFileName}.RIX", rix.ToArray());
         }
 
-        private void imgGIF(ExpFileEntry exp, PalFileEntry pal, String baseFileName)
+        public void imgGIF(ExpFileEntry exp, PalFileEntry pal, String baseFileName)
         {
 
-            #if HAS_UNO_SKIA
+#if HAS_UNO_SKIA
                 return;
-            #else
+#else
 
             if (exp.rix)
             {
@@ -576,8 +615,19 @@ namespace DRE.Services
         /// </summary>
         /// <param name="bpaFile">BPK file into BPA</param>
         /// <returns>Palette id and data</returns>
-        private PalFileEntry assignPAL(BpaFileEntry bpaFile)
+        private PalFileEntry assignPAL(BpaFileEntry bpaFile, bool IsTrackFlipped = false)
         {
+            //Test track flipped palette
+            if (IsTrackFlipped)
+            {
+                return new PalFileEntry()
+                {
+                    id = 10000 + bpaFile.id,
+                    Data = db.Query<Byte[]>("SELECT d FROM bpa_files WHERE nf=@nf",
+                           new { nf = $"{bpaFile.FileName.Substring(0, 3)}-FLIP.PAL" }).Single().ToArray()
+                };
+            }
+
             //Test RIX : if true, palette is in exp data header
 
             var exp = db.Query<ExpFileEntry>(
