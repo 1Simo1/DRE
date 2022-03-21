@@ -5,7 +5,7 @@ namespace DRE.Libs.Trk
 {
     public class LibTrk
     {
-        private String dir { get; set; }    
+        private String dir { get; set; }
         public LibTrk(String gameFolderPath)
         {
             dir = gameFolderPath;
@@ -90,7 +90,7 @@ namespace DRE.Libs.Trk
 
             TrkInfo trkInfo = new TrkInfo();
 
-            TrkFile trk = db.Query<TrkFile>("SELECT id,nf AS Name,tr AS trNumber, f AS IsFlipped FROM trk WHERE id=@id", new {id = trackID}).Single();
+            TrkFile trk = db.Query<TrkFile>("SELECT id,nf AS Name,tr AS trNumber, f AS IsFlipped FROM trk WHERE id=@id", new { id = trackID }).Single();
 
             int trkInfosCount = db.Query("SELECT * FROM trk_info WHERE trk=@id", new { id = trackID }).ToList().Count;
 
@@ -100,15 +100,18 @@ namespace DRE.Libs.Trk
                     ("SELECT d FROM bpa_files WHERE nf=@nf", new { nf = $"TR{trk.trNumber}-INF.BIN" }).Single().AsList();
 
 
-                for (int i=1; i<=127; i++)
+                for (int i = 1; i <= 127; i++)
                 {
-                    int v = BitConverter.ToInt32(trkInfoData.GetRange(4 * (i-1), 4).ToArray(), 0);
+                    int v = BitConverter.ToInt32(trkInfoData.GetRange(4 * (i - 1), 4).ToArray(), 0);
 
-                    db.Query("INSERT INTO trk_info(trk,a,v) VALUES(@trk,@a,@v)", new { 
+                    db.Query("INSERT INTO trk_info(trk,a,v) VALUES(@trk,@a,@v)", new
+                    {
                         trk = trackID,
                         a = i,
                         v = v
                     });
+
+                    x.Report((300 + ((12 * i / 127) * trackID)) / 14);
                 }
 
             }
@@ -117,22 +120,119 @@ namespace DRE.Libs.Trk
 
             if (trkFilesCount == 0) // Track files not yet loaded in DB
             {
+                //SCE file id in DB
+                var sce = db.Query<int>("SELECT exp FROM bpa_files WHERE nf=@nf", new { nf = $"TR{trk.trNumber}-SCE.BPK" }).First();
+
+                //SCE data for selected track
+                List<byte>? d = db.Query<Byte[]>("SELECT d FROM exp WHERE id=@exp", new { exp = sce }).First().ToList();
+
+                x.Report((300 + (12 * trackID)) / 14);
+
+                db.Query("REPLACE INTO trk_files(trk,NF,n,d) VALUES(@trk,@nf,@n,@d)", new
+                {
+                    trk = trk.id,
+                    nf = $"TR{trk.trNumber}-3D-HEADER",
+                    n = 0,
+                    d = d[0]
+                });
+
+                int total3DObjects = (int)d[0];
+
+                for (int i = 1; i <= total3DObjects; i++)
+                {
+                    db.Query("REPLACE INTO trk_files(trk,NF,n,d) VALUES(@trk,@nf,@n,@d)", new
+                    {
+                        trk = trk.id,
+                        nf = $"TR{trk.trNumber}-3D-HEADER",
+                        n = i,
+                        d = d.GetRange(((i - 1) * 3152) + 1, 3152)
+                    });
+
+                    /**
+                     * More 3DObject computation here?
+                     */
+
+                    x.Report((300 + ((12 + (9 * i / total3DObjects)) * trackID)) / 14);
+                }
+
+                int delta = 3152 * total3DObjects + 1;
+
+                d = d.GetRange(delta, d.Count - delta);
+
+                int totalTextures = (int)d[0];
+
+                db.Query("REPLACE INTO trk_files(trk,NF,n,d) VALUES(@trk,@nf,@n,@d)", new
+                {
+                    trk = trk.id,
+                    nf = $"TR{trk.trNumber}-TEXTURE-HEADER",
+                    n = 0,
+                    d = d[0]
+                });
+
+
+                for (int i = 1; i <= totalTextures; i++)
+                {
+
+                    var t = d.GetRange(((i - 1) * 44) + 1, 44);
+
+                    db.Query("REPLACE INTO trk_files(trk,NF,n,d) VALUES(@trk,@nf,@n,@d)", new
+                    {
+                        trk = trk.id,
+                        nf = $"TR{trk.trNumber}-TEXTURE-HEADER",
+                        n = i,
+                        d = t
+                    });
+
+
+                    var txr = new TrkTexture()
+                    {
+                        width = BitConverter.ToInt32(t.GetRange(0, 4).ToArray(), 0),
+                        height = BitConverter.ToInt32(t.GetRange(4, 4).ToArray(), 0),
+                        offset = BitConverter.ToInt32(t.GetRange(8, 4).ToArray(), 0),
+                        mapX = BitConverter.ToInt32(t.GetRange(12, 4).ToArray(), 0),
+                        mapY = BitConverter.ToInt32(t.GetRange(16, 4).ToArray(), 0),
+                        size_multiplier = BitConverter.ToInt32(t.GetRange(20, 4).ToArray(), 0),
+                        realX = BitConverter.ToInt32(t.GetRange(24, 4).ToArray(), 0),
+                        realY = BitConverter.ToInt32(t.GetRange(28, 4).ToArray(), 0),
+                        Unknown_Unused = BitConverter.ToInt32(t.GetRange(32, 4).ToArray(), 0),
+                        Linked3DObj = BitConverter.ToInt32(t.GetRange(36, 4).ToArray(), 0),
+                        Linked3DObjPolygon = BitConverter.ToInt32(t.GetRange(40, 4).ToArray(), 0),
+                    };
+
+                    txr.Data = d.GetRange(txr.offset, txr.width * txr.height).ToArray();
+
+                    db.Query("REPLACE INTO trk_files(trk,NF,n,d) VALUES(@trk,@nf,@n,@d)", new
+                    {
+                        trk = trk.id,
+                        nf = $"TR{trk.trNumber}-TEXTURE",
+                        n = i,
+                        d = txr.Data
+                    });
+
+
+
+                    x.Report((300 + ((12 + (9 * i / total3DObjects)) * trackID)) / 14);
+                }
+
+
+                if (true) { }
+
 
             }
 
-            trkInfo.fullImageWidth = db.Query<int>("SELECT v FROM trk_info WHERE trk=@id AND a=1", new {id = trackID}).FirstOrDefault();
+            trkInfo.fullImageWidth = db.Query<int>("SELECT v FROM trk_info WHERE trk=@id AND a=1", new { id = trackID }).FirstOrDefault();
             trkInfo.fullImageHeight = db.Query<int>("SELECT v FROM trk_info WHERE trk=@id AND a=2", new { id = trackID }).FirstOrDefault();
             trkInfo.totalZones = db.Query<int>("SELECT v FROM trk_info WHERE trk=@id AND a=3", new { id = trackID }).FirstOrDefault();
 
             trkInfo.driverStartPositions = new();
 
-            for (int d=1;d<=4;d++)
+            for (int d = 1; d <= 4; d++)
             {
                 trkInfo.driverStartPositions.Add(new()
                 {
-                    X = db.Query<int>("SELECT v FROM trk_info WHERE trk=@id AND a=@a", new { id = trackID, a = (d*3)+1 }).FirstOrDefault(),
-                    Y = db.Query<int>("SELECT v FROM trk_info WHERE trk=@id AND a=@a", new { id = trackID, a = (d*3)+2 }).FirstOrDefault(),
-                    Rotation = db.Query<int>("SELECT v FROM trk_info WHERE trk=@id AND a=@a", new { id = trackID, a = (d*3)+3 }).FirstOrDefault()
+                    X = db.Query<int>("SELECT v FROM trk_info WHERE trk=@id AND a=@a", new { id = trackID, a = (d * 3) + 1 }).FirstOrDefault(),
+                    Y = db.Query<int>("SELECT v FROM trk_info WHERE trk=@id AND a=@a", new { id = trackID, a = (d * 3) + 2 }).FirstOrDefault(),
+                    Rotation = db.Query<int>("SELECT v FROM trk_info WHERE trk=@id AND a=@a", new { id = trackID, a = (d * 3) + 3 }).FirstOrDefault()
                 });
             }
 
@@ -153,10 +253,10 @@ namespace DRE.Libs.Trk
             {
                 trkInfo.pedestrianPositions.Add(new()
                 {
-                    X = db.Query<int>("SELECT v FROM trk_info WHERE trk=@id AND a=@a", new { id = trackID, a = (p*4) + 48 }).FirstOrDefault(),
-                    Y = db.Query<int>("SELECT v FROM trk_info WHERE trk=@id AND a=@a", new { id = trackID, a = (p*4) + 49 }).FirstOrDefault(),
-                    Type = db.Query<int>("SELECT v FROM trk_info WHERE trk=@id AND a=@a", new { id = trackID, a = (p*4) + 50 }).FirstOrDefault(),
-                    Rotation = db.Query<int>("SELECT v FROM trk_info WHERE trk=@id AND a=@a", new { id = trackID, a = (p*4) + 51 }).FirstOrDefault()
+                    X = db.Query<int>("SELECT v FROM trk_info WHERE trk=@id AND a=@a", new { id = trackID, a = (p * 4) + 48 }).FirstOrDefault(),
+                    Y = db.Query<int>("SELECT v FROM trk_info WHERE trk=@id AND a=@a", new { id = trackID, a = (p * 4) + 49 }).FirstOrDefault(),
+                    Type = db.Query<int>("SELECT v FROM trk_info WHERE trk=@id AND a=@a", new { id = trackID, a = (p * 4) + 50 }).FirstOrDefault(),
+                    Rotation = db.Query<int>("SELECT v FROM trk_info WHERE trk=@id AND a=@a", new { id = trackID, a = (p * 4) + 51 }).FirstOrDefault()
                 });
             }
 
@@ -166,6 +266,6 @@ namespace DRE.Libs.Trk
 
             return trkInfo;
         }
-    
+
     }
 }
