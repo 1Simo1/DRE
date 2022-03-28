@@ -66,7 +66,7 @@ At the moment, you can only "Extract textures".
 
 There are two main folder, both direct subfolders of DRE executable location : 
 
-- db, which contains, well, default database and DRE database. Default database is only written at the end of first setup. So, if you have some issue with DRE database (which is main projct database) you can delete DRE.db file, thn copy DEFAULT.db in DRE.db.
+- db, which contains, well, default database and DRE database. Default database is only written at the end of first setup. So, if you have some issue with DRE database (which is main projct database) you can delete DRE.db file, then copy DEFAULT.db in DRE.db.
   - this folder contains also locale folder, for xml localization files
 - files, which contains all files extracted from editor. It's divided into BPA, TRK, and TRK has one folder per track.
 
