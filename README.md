@@ -28,7 +28,7 @@ Steps for setup
 
 - Write new project name and press "Confirm" as shown in above image
 - Now the search for a suitable game folder starts, when you see your folder in list, you can already choose it, you don't need to wait searching ending, you can now click enabled "DRE Project Setup" button
-- Wait for setup steps (you can also see messages while in progress), while you see this :
+- Wait for setup steps (you can also see messages while in progress), until you see this :
 
 ![setup_3](https://user-images.githubusercontent.com/37436823/160475613-91bde35f-a3e4-492a-b01a-61b9173f0318.png)
 
@@ -50,7 +50,7 @@ Some other implementation is already here, but at the moment "only" saved and lo
 
 ![bpa](https://user-images.githubusercontent.com/37436823/160477589-e7ef8af7-bef3-43af-89a0-a2bc1dd996bf.png)
 
- You can extract ALL game default "standard menu images" with only one click, or you can choose one BPA from horizontal list, then view archive file list, choose one of them and view availabl operations (normally, extract it from archive as is, expand it if is BPK, extract images if possibile).
+ You can extract ALL game default "standard menu images" with only one click, or you can choose one BPA from horizontal list, then view archive file list, choose one of them and view available operations (normally, extract it from archive as is, expand it if is BPK, extract images if possibile).
  
  ![sg](https://user-images.githubusercontent.com/37436823/160478363-475b1cf7-28a3-4288-8466-903740717a1f.png)
 
@@ -66,7 +66,7 @@ At the moment, you can only "Extract textures".
 
 There are two main folder, both direct subfolders of DRE executable location : 
 
-- db, which contains, well, default database and DRE database. Default database is only written at the end of first setup. So, if you have some issue with DRE database (which is main projct database) you can delete DRE.db file, then copy DEFAULT.db in DRE.db.
+- db, which contains, well, default database and DRE database. Default database is only written at the end of first setup. So, if you have some issue with DRE database (which is main project database) you can delete DRE.db file, then copy DEFAULT.db in DRE.db.
   - this folder contains also locale folder, for xml localization files
 - files, which contains all files extracted from editor. It's divided into BPA, TRK, and TRK has one folder per track.
 
