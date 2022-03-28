@@ -29,7 +29,8 @@ namespace DRE.Libs.Lng
 
                 LocalizationSetupHelper();
 
-            } else if (String.IsNullOrEmpty(L))
+            }
+            else if (String.IsNullOrEmpty(L))
             {
                 XmlReader d = XmlReader.Create($"{dir}/default.xml");
                 d.Read(); // <xml>
@@ -44,11 +45,11 @@ namespace DRE.Libs.Lng
         {
             L = newLanguageCode;
 
-          
+
 
         }
         public String SelectedLanguageCode() => L;
-    
+
 
         /// <summary>
         /// Translation method
@@ -56,7 +57,7 @@ namespace DRE.Libs.Lng
         /// <param name="id">String code to localize</param>
         /// <param name="languageCode">Optional parameter, default null for default language</param>
         /// <returns>Localized string (if id not found returns id string)</returns>
-        public String _(String id, String languageCode=null)
+        public String _(String id, String languageCode = null)
         {
             if (!String.IsNullOrEmpty(languageCode)) L = languageCode;
 
@@ -102,7 +103,7 @@ namespace DRE.Libs.Lng
 
             foreach (String lng in LngFiles)
             {
-                String code = lng.Substring(dir.Length+1);
+                String code = lng.Substring(dir.Length + 1);
                 code = code.Substring(0, code.Length - 4);
 
                 if (!String.IsNullOrEmpty(code) && !code.Equals("IT") && !code.Equals("default") && File.Exists($"{dir}/{code.ToUpper()}.PNG"))
@@ -112,11 +113,11 @@ namespace DRE.Libs.Lng
                         Code = code,
                         ImgSrc = $"{dir}/{code.ToUpper()}.png"
                     });
-                } 
+                }
 
             }
 
-                return list;
+            return list;
         }
 
         /// <summary>
@@ -452,12 +453,12 @@ namespace DRE.Libs.Lng
                 $"1MxIjlgt3y3t6TgTViro8rZ/GTJsd4Drcm0hgiAK6eyrbACDeJ84WfleSs2a1BlwX59IVziE+vwfUqj9bg+OiaACor8sjpgPm14bUwhUDTecSY9KksqrDL9GrCslJl2mqOkiBQ2A0O" +
                 $"uHdUDTuAaC1eByZaOPE4cxwzuFz7vfO4RCcCH6ijZ+cRNotXLudVrrdSvhMTOwGw0n6waGXo+QAcTTV5GQOV1PDqoDll6diWaL9fnppqiypNnpoFYgxJF1SRVVxQ5ktWopgZ0ZrcRG5" +
                 $"efVuALqdDm9du4LzrhE+VzdDkrvBHIKy+fAKQWs0y3ZVfppFr06LDaNkaD5ghr5/G5cXazj5zAAn8+fjYD1gCejJUCR09s4HjrAFYIfDnUqMbWxjG9ujb2JmjzUA7nGPgDEAYwAec/" +
-                $"svcFK3Xl1mErcAAAAASUVORK5CYII="  
+                $"svcFK3Xl1mErcAAAAASUVORK5CYII="
             ));
             fpng.Close();
             #endregion
         }
 
-       
+
     }
 }

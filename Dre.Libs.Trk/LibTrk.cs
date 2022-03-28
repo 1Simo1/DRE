@@ -1,5 +1,7 @@
 ﻿using Dapper;
 using DRE.Libs.Trk.Models;
+using System.Data;
+using System.Drawing;
 
 namespace DRE.Libs.Trk
 {
@@ -140,12 +142,12 @@ namespace DRE.Libs.Trk
 
                 for (int i = 1; i <= total3DObjects; i++)
                 {
-                    db.Query("REPLACE INTO trk_files(trk,NF,n,d) VALUES(@trk,@nf,@n,@d)", new
+                    db.Query("REPLACE INTO trk_files(trk,NF,n,d) VALUES(@trk,@nf,@n,@data)", new
                     {
                         trk = trk.id,
                         nf = $"TR{trk.trNumber}-3D-HEADER",
                         n = i,
-                        d = d.GetRange(((i - 1) * 3152) + 1, 3152)
+                        data = d.GetRange(((i - 1) * 3152) + 1, 3152).ToArray()
                     });
 
                     /**
@@ -175,12 +177,12 @@ namespace DRE.Libs.Trk
 
                     var t = d.GetRange(((i - 1) * 44) + 1, 44);
 
-                    db.Query("REPLACE INTO trk_files(trk,NF,n,d) VALUES(@trk,@nf,@n,@d)", new
+                    db.Query("REPLACE INTO trk_files(trk,NF,n,d) VALUES(@trk,@nf,@n,@data)", new
                     {
                         trk = trk.id,
                         nf = $"TR{trk.trNumber}-TEXTURE-HEADER",
                         n = i,
-                        d = t
+                        data = t.ToArray()
                     });
 
 
@@ -188,7 +190,7 @@ namespace DRE.Libs.Trk
                     {
                         width = BitConverter.ToInt32(t.GetRange(0, 4).ToArray(), 0),
                         height = BitConverter.ToInt32(t.GetRange(4, 4).ToArray(), 0),
-                        offset = BitConverter.ToInt32(t.GetRange(8, 4).ToArray(), 0),
+                        offset = BitConverter.ToInt32(t.GetRange(8, 4).ToArray(), 0) + 44 * totalTextures,
                         mapX = BitConverter.ToInt32(t.GetRange(12, 4).ToArray(), 0),
                         mapY = BitConverter.ToInt32(t.GetRange(16, 4).ToArray(), 0),
                         size_multiplier = BitConverter.ToInt32(t.GetRange(20, 4).ToArray(), 0),
@@ -201,12 +203,12 @@ namespace DRE.Libs.Trk
 
                     txr.Data = d.GetRange(txr.offset, txr.width * txr.height).ToArray();
 
-                    db.Query("REPLACE INTO trk_files(trk,NF,n,d) VALUES(@trk,@nf,@n,@d)", new
+                    db.Query("REPLACE INTO trk_files(trk,NF,n,d) VALUES(@trk,@nf,@n,@data)", new
                     {
                         trk = trk.id,
                         nf = $"TR{trk.trNumber}-TEXTURE",
                         n = i,
-                        d = txr.Data
+                        data = txr.Data
                     });
 
 
@@ -215,7 +217,6 @@ namespace DRE.Libs.Trk
                 }
 
 
-                if (true) { }
 
 
             }
@@ -266,6 +267,127 @@ namespace DRE.Libs.Trk
 
             return trkInfo;
         }
+
+        public void ExtractTrackTextures(TrkFile selectedTRK, IProgress<float> x, IDbConnection db)
+        {
+            List<byte>? pal = selectedTRK.IsFlipped ?
+                db.Query<Byte[]>("SELECT d FROM bpa_files WHERE nf=@nf", new { nf = $"TR{selectedTRK.trNumber}-FLIP.PAL" }).Single().ToList() :
+                null;
+
+            if (pal == null) //Track NOT Flipped, compute palette from IMA exp image
+            {
+                int exp_id = db.Query<int>("SELECT exp FROM bpa_files WHERE nf=@nf", new { nf = $"TR{selectedTRK.trNumber}-IMA.BPK" }).First();
+
+                pal = db.Query<Byte[]>("SELECT d FROM exp WHERE id=@e", new { e = exp_id }).Single().ToList().GetRange(10, 768);
+
+            }
+
+            int totalTextures = db.Query<int>("SELECT COUNT(*) FROM trk_files WHERE NF=@nf AND trk=@trk",
+                                new { nf = $"TR{selectedTRK.trNumber}-TEXTURE", trk = selectedTRK.id }).Single();
+
+            for (int i = 1; i <= totalTextures; i++)
+            {
+                try
+                {
+
+                    String baseFileName = $"{AppDomain.CurrentDomain.BaseDirectory}files/TRK/{selectedTRK.Name}/TEXTURE{i}";
+
+                    List<byte>? header = db.Query<Byte[]>("SELECT d FROM trk_files WHERE NF=@nf AND n=@n",
+                                new { nf = $"TR{selectedTRK.trNumber}-TEXTURE-HEADER", n = i }).First().ToList().GetRange(0, 8);
+
+                    int width = BitConverter.ToInt32(header.GetRange(0, 4).ToArray());
+
+                    int height = BitConverter.ToInt32(header.GetRange(4, 4).ToArray());
+
+                    List<byte>? exp = db.Query<Byte[]>("SELECT d FROM trk_files WHERE NF=@nf AND n=@n AND trk=@trk",
+                               new { nf = $"TR{selectedTRK.trNumber}-TEXTURE", n = i, trk = selectedTRK.id }).First().ToList();
+
+                    /* RIX */
+
+                    List<Byte> rix = new List<Byte>();
+
+                    rix.AddRange(new byte[] { 82, 73, 88, 51 }); //RIX3 
+
+                    rix.Add((byte)(width % 256)); //w LSB
+                    rix.Add((byte)(width / 256)); //w MSB
+
+                    rix.Add((byte)(height % 256)); //h LSB
+                    rix.Add((byte)(height / 256)); //h MSB
+
+                    rix.AddRange(new byte[] { 175, 0 }); //VGA & 0
+
+                    rix.AddRange(pal);
+
+                    rix.AddRange(exp);
+
+                    File.WriteAllBytes($"{baseFileName}.RIX", rix.ToArray());
+
+                    /* GIF */
+
+#if HAS_UNO_SKIA
+                return;
+#else
+
+                    using (var image = new Bitmap(width, height))
+                    {
+                        int np = 0;
+                        for (int w = 0; w < height; w++)
+                        {
+                            for (int h = 0; h < width; h++)
+                            {
+                                image.SetPixel(h, w, Color.FromArgb(
+                                    pal[(exp[np]) * 3] * 4,
+                                    pal[(exp[np]) * 3 + 1] * 4,
+                                    pal[(exp[np]) * 3 + 2] * 4
+                                    ));
+
+                                np++;
+                            }
+                        }
+
+                        image.Save($"{baseFileName}.GIF", System.Drawing.Imaging.ImageFormat.Gif);
+                    }
+#endif
+
+                    /* BMP */
+#if HAS_UNO_SKIA
+                return;
+#else
+                    using (var image = new Bitmap(width, height))
+                    {
+                        int np = 0;
+                        for (int w = 0; w < height; w++)
+                        {
+                            for (int h = 0; h < width; h++)
+                            {
+                                image.SetPixel(h, w, Color.FromArgb(
+                                    pal[(exp[np]) * 3] * 4,
+                                    pal[(exp[np]) * 3 + 1] * 4,
+                                    pal[(exp[np]) * 3 + 2] * 4
+                                    ));
+
+                                np++;
+                            }
+                        }
+
+                        image.Save($"{baseFileName}.BMP", System.Drawing.Imaging.ImageFormat.Bmp);
+                    }
+#endif
+
+
+
+
+                }
+                catch (Exception ex) { }
+
+
+                x.Report(i / totalTextures);
+            }
+
+
+
+        }
+
 
     }
 }

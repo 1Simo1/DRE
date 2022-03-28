@@ -28,6 +28,6 @@ namespace DRE.Interfaces
         void UpdateSaveGamesFromGameFolder();
         List<TrkFile> trackList();
         Task<TrkInfo> LoadTrack(int id, IProgress<float> x);
-
+        void ExtractTrackTextures(TrkFile selectedTRK, IProgress<float> x);
     }
 }

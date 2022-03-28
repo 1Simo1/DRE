@@ -7,8 +7,8 @@ namespace DRE.Libs.Bpa
 
         private String dir { get; set; }
 
-        private List<BpaFile> bpa_list { get; set; }   
-        
+        private List<BpaFile> bpa_list { get; set; }
+
         /// <summary>
         /// Lists BPAs in game folder
         /// </summary>
@@ -33,7 +33,7 @@ namespace DRE.Libs.Bpa
                     Name = nBpa.Substring(0, nBpa.Length - 4),
                     Size = new FileInfo(nf).Length
                 });
-                    
+
             }
 
             return bpa_list;
@@ -51,7 +51,7 @@ namespace DRE.Libs.Bpa
 
             var nf = bpaName.Contains("BPA") ? bpaName : $"{bpaName}.BPA";
 
-           
+
             using (MemoryStream m = new MemoryStream(File.ReadAllBytes($"{dir}/{nf}")))
             {
                 using (BinaryReader b = new BinaryReader(m))
@@ -62,7 +62,7 @@ namespace DRE.Libs.Bpa
 
                     int n = h.ReadInt32(); //Total file number in BPA
 
-                    for (int i=1;i<=n;i++)
+                    for (int i = 1; i <= n; i++)
                     {
                         Byte[] bfn = h.ReadBytes(13); //Bytes for entry file name
                         String FileEntryName = String.Empty;
@@ -76,18 +76,19 @@ namespace DRE.Libs.Bpa
 
                         int entryDataSize = h.ReadInt32();
 
-                        bpaFileEntries.Add(new BpaFileEntry() { 
-                        
+                        bpaFileEntries.Add(new BpaFileEntry()
+                        {
+
                             FileName = FileEntryName,
                             Size = entryDataSize,
                             Data = b.ReadBytes(entryDataSize)
-                        
+
                         });
 
                     }
 
-                } 
-            
+                }
+
             }
 
             return bpaFileEntries;

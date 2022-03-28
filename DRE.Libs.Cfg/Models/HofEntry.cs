@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace DRE.Libs.Cfg.Models
+﻿namespace DRE.Libs.Cfg.Models
 {
     public class HofEntry
     {
@@ -17,6 +11,6 @@ namespace DRE.Libs.Cfg.Models
 
         public int Level { get; set; }
 
-        
+
     }
 }

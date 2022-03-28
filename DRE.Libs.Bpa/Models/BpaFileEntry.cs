@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace DRE.Libs.Bpa.Models
+﻿namespace DRE.Libs.Bpa.Models
 {
     public class BpaFileEntry
     {
@@ -18,6 +12,6 @@ namespace DRE.Libs.Bpa.Models
         public Byte[] Data { get; set; }
 
         public override string ToString() => FileName;
-       
+
     }
 }

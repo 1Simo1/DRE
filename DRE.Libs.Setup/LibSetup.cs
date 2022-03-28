@@ -1,19 +1,19 @@
-﻿using System.Data;
-using Dapper;
-using System.Data.SQLite;
-using DRE.Libs.Setup.Models;
-using DRE.Libs.Lng;
+﻿using Dapper;
 using DRE.Libs.Bpa;
 using DRE.Libs.Bpa.Models;
-using DRE.Libs.Trk;
-using DRE.Libs.Trk.Models;
 using DRE.Libs.Cfg;
 using DRE.Libs.Cfg.Models;
 using DRE.Libs.Haf;
 using DRE.Libs.Haf.Models;
+using DRE.Libs.Lng;
+using DRE.Libs.Lng.Models;
 using DRE.Libs.SaveGame;
 using DRE.Libs.SaveGame.Models;
-using DRE.Libs.Lng.Models;
+using DRE.Libs.Setup.Models;
+using DRE.Libs.Trk;
+using DRE.Libs.Trk.Models;
+using System.Data;
+using System.Data.SQLite;
 using System.Xml;
 
 namespace DRE.Libs.Setup
@@ -58,12 +58,14 @@ namespace DRE.Libs.Setup
         /// <returns>Total number of tables in DRE DB</returns>
         private int Init()
         {
-            try {
-                
+            try
+            {
+
                 if (db == null) db = new SQLiteConnection($"Data Source={AppDomain.CurrentDomain.BaseDirectory}db/DRE.db");
                 return db.Query<int>("SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite%'").First();
-            
-            } catch (Exception ex) { return 0; }
+
+            }
+            catch (Exception ex) { return 0; }
         }
 
         public async Task Setup(String p_dre, String c_dre, IProgress<SetupProgress> x)
@@ -79,9 +81,10 @@ namespace DRE.Libs.Setup
                 {
                     db.Query("CREATE TABLE IF NOT EXISTS dre(id INTEGER PRIMARY KEY AUTOINCREMENT, n TEXT NOT NULL UNIQUE, v TEXT)");
 
-                  
 
-                    if (String.IsNullOrEmpty(p_dre)) {
+
+                    if (String.IsNullOrEmpty(p_dre))
+                    {
 
 
                         db.Query("INSERT INTO dre(n,v) VALUES (@n,@v)", new { n = "dre_v", v = dre_v });
@@ -98,9 +101,9 @@ namespace DRE.Libs.Setup
 
                     db.Query("INSERT INTO dre(n,v) VALUES (@n,@v)", new { n = "p_dre", v = p_dre });
                     db.Query("INSERT INTO dre(n,v) VALUES (@n,@v)", new { n = "c_dre", v = c_dre });
-                   
+
                     x.Report(new SetupProgress() { msg = T._("setup"), p = i * 100 / tot_tabs });
-              
+
                     //if (String.IsNullOrEmpty(p_dre)) return;
 
                     x.Report(new SetupProgress() { msg = T._("setup_bpa"), p = i * 100 / tot_tabs });
@@ -182,7 +185,7 @@ namespace DRE.Libs.Setup
                     }
 
                     db.Query("CREATE TABLE IF NOT EXISTS crd(id INTEGER PRIMARY KEY, trk INTEGER NOT NULL, c text NOT NULL, n text NOT NULL, t TEXT)");
-                   // Dictionary<short, Tuple<int, string, string, Int16>> rd = Trk.defaultTrackRecords();
+                    // Dictionary<short, Tuple<int, string, string, Int16>> rd = Trk.defaultTrackRecords();
 
                     List<TrkRecord> rd = Trk.defaultTrackRecords();
 
@@ -320,7 +323,7 @@ namespace DRE.Libs.Setup
         public void SetupLanguage(String languageCode) => T.setLng(languageCode);
 
         public String SelectedLanguageCode() => T.SelectedLanguageCode();
-        
+
 
     }
 }

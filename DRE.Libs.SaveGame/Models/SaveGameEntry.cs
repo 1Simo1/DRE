@@ -13,8 +13,8 @@
 
         public String ValueText { get; set; }
 
-        public override string ToString() => Position==0 ? $"{FileName} - {ValueText}" : ValueText;
-        
+        public override string ToString() => Position == 0 ? $"{FileName} - {ValueText}" : ValueText;
+
 
 
     }

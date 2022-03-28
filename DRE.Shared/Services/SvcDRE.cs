@@ -121,5 +121,8 @@ namespace DRE.Services
             /* Load Track */
             return await Task.Run(() => _trkSvc.LoadTrack(id, x, db));
         }
+
+        public void ExtractTrackTextures(TrkFile selectedTRK, IProgress<float> x) => _trkSvc.ExtractTrackTextures(selectedTRK, x);
+
     }
 }

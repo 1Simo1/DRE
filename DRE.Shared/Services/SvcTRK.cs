@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace DRE.Services
@@ -23,6 +22,8 @@ namespace DRE.Services
         public List<TrkFile> List() => db.Query<TrkFile>("SELECT id, nf AS Name, tr AS trNumber, f AS IsFlipped FROM trk ORDER BY id ASC").AsList();
 
         public async Task<TrkInfo> LoadTrack(int id, IProgress<float> x, IDbConnection db) => new Libs.Trk.LibTrk(gameFolder).LoadTrack(id, x, db);
-       
+
+        public void ExtractTrackTextures(TrkFile selectedTRK, IProgress<float> x) => new Libs.Trk.LibTrk(gameFolder).ExtractTrackTextures(selectedTRK, x, db);
+
     }
 }
