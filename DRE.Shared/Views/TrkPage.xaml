@@ -116,7 +116,7 @@
             </StackPanel>
 
             <Grid Grid.Row="1" Grid.Column="1" ColumnSpan="2" BorderBrush="Teal" BorderThickness="1" Margin="21,21,21,0">
-                 <Button Background="{ThemeResource ButtonBackgroundThemeBrush}" VerticalAlignment="Top" Margin="21,0"
+                 <Button Background="{ThemeResource ButtonBackgroundThemeBrush}" VerticalAlignment="Top" Margin="21"
                         Command="{Binding ExtractTrkTexturesCmd}"
                         BorderThickness="1"
                         BorderBrush="{ThemeResource ButtonBorderThemeBrush}"

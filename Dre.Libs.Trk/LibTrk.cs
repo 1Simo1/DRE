@@ -290,7 +290,7 @@ namespace DRE.Libs.Trk
                 try
                 {
 
-                    String baseFileName = $"{AppDomain.CurrentDomain.BaseDirectory}files/TRK/{selectedTRK.Name}/TEXTURE{i}";
+                    String baseFileName = $"{AppDomain.CurrentDomain.BaseDirectory}files/TRK/{selectedTRK.Name.Replace(" ", "_")}/TEXTURE{i}";
 
                     List<byte>? header = db.Query<Byte[]>("SELECT d FROM trk_files WHERE NF=@nf AND n=@n",
                                 new { nf = $"TR{selectedTRK.trNumber}-TEXTURE-HEADER", n = i }).First().ToList().GetRange(0, 8);

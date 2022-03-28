@@ -201,6 +201,8 @@ namespace DRE.Libs.Lng
             N("y", "Sì");
             N("agg_file", "Aggiorna da file");
             N("drbpa", "Scrivi File BPA nella cartella di gioco");
+            N("drtrk", "Salva Circuito nella cartella di gioco");
+            N("txr", "Estrai Textures");
             N("n_d", "In Costruzione");
 
             writer.WriteEndElement();
@@ -303,6 +305,8 @@ namespace DRE.Libs.Lng
             N("y", "Yes");
             N("agg_file", "Update from file");
             N("drbpa", "Write BPA File in game folder");
+            N("drtrk", "Save Track in game folder");
+            N("txr", "Extract Textures");
             N("n_d", "Under Construction");
 
 
@@ -423,6 +427,8 @@ namespace DRE.Libs.Lng
             N("y", "Yes");
             N("agg_file", "Update from file");
             N("drbpa", "Write BPA File in game folder");
+            N("drtrk", "Save Track in game folder");
+            N("txr", "Extract Textures");
             N("n_d", "Under Construction");
 
 
