@@ -10,7 +10,7 @@ First of all, open and compile code in Visual Studio. DRE editor starts from a U
 
 - "DRE.Skia.WPF.Host" for Windows 7
 
-- "Dre.SKia.GTK" for Linux/WSL into Windows
+- "Dre.Skia.GTK" for Linux/WSL into Windows
 
 ### First DRE Setup
 
