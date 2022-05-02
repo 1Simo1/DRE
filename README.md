@@ -71,4 +71,3 @@ There are two main folder, both direct subfolders of DRE executable location :
 - files, which contains all files extracted from editor. It's divided into BPA, TRK, and TRK has one folder per track.
 
 None of this file is in repository. In fact, first setup writes almost all the initial folder/file structure you need!
- 
